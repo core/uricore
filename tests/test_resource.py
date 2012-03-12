@@ -10,26 +10,27 @@ class TestResources(unittest.TestCase):
 
     def test_iri(self):
         iri = IRI(u'http://\N{SNOWMAN}/')
-        assert repr(iri) == "IRI(u'http://\u2603/')"
+        assert repr(iri) == "IRI('http://xn--n3h/')"
         assert iri.netloc == u'http://\u2603/'
-        assert iri.hostname == '\u2603'
+        assert iri.hostname == u'\u2603'
         assert iri.port is None
         assert iri.path == u'/'
 
     def test_iri_add_port(self):
         iri = IRI(u'http://\N{SNOWMAN}/')
         new_iri = iri.replace(port=8000)
-        assert repr(new_iri) == "IRI(u'http://\u2603:8000/')"
+        assert repr(new_iri) == "IRI('http://xn--n3h:8000/')"
+        assert iri.port == 8000
         assert iri.port is None
 
     def test_iri_update_query(self):
         iri = IRI(u'http://\N{SNOWMAN}/')
         iriq = iri.update_query({'foo': u'42'})
         assert repr(iri.query) == "MultiDict()"
-        assert repr(iriq) == "IRI(u'http://\u2603/?foo=42')"
+        assert repr(iriq) == "IRI('http://xn--n3h/?foo=42')"
         assert repr(iriq.query) == "MultiDict([('foo', '42')])"
         iriq2 = iriq.update_query(foo=None)
-        assert repr(iriq2) == "IRI(u'http://\u2603/')"
+        assert repr(iriq2) == "IRI('http://xn--n3h/')"
         assert repr(iriq.query) == "MultiDict([('foo', '42')])"
 
     def test_uri(self):
