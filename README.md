@@ -1,0 +1,31 @@
+# urilib
+
+Example of use::
+
+    >>> from httpcore.uri import URI
+    >>> from httpcore.iri import IRI
+    >>> iri = IRI(u'http://\N{SNOWMAN}/')
+    >>> iri
+    IRI(u'http://\u2603/')
+    >>> uri = URI(iri)
+    >>> uri
+    URI('http://xn--n3h/')
+    >>> iri.netloc
+    u'http://\u2603/'
+    >>> iri.hostname
+    '\u2603'
+    >>> iri.port is None
+    True
+    >>> iri.path
+    u'/'
+    >>> hasattr(iri, '__hash__')
+    True
+    >>> iri.replace(port=8000)
+    IRI(u'http://\u2603:8000/')
+    >>> iriq = iri.update_query({'foo': u'42'})
+    >>> iriq
+    IRI(u'http://\u2603/?foo=42')
+    >>> iriq.update_query(foo=None)
+    IRI(u'http://\u2603/')
+    >>> iriq.query
+    MultiDict([('foo', '42')])
