@@ -4,18 +4,26 @@ import wkz_urls
 
 
 class _RI(object):
+    RIComponents = namedtuple('RIComponents', ('scheme', 'auth', 'hostname',
+                                               'port', 'path', 'querystr',
+                                               'query', 'fragment'))
 
-    def __init__(self, query_class=None):
-        self.decoder
+    def __init__(self, ri, charset, query_class=None):
+        scheme, auth, hostname, port, path, querystr, fragment = wkz_urls._uri_split(ri)
+
+        query = wkz_urls.url_decode(querystr, charset, cls=query_class)
+        self.components = RIComponents(scheme, auth, hostname, port, path,
+                                       querystr, query, fragment)
 
 
 class IRI(_RI):
 
     def __init__(self, iri, charset='utf-8', query_class=None):
-        super(IRI, self).__init__(query_class)
+        super(IRI, self).__init__(iri, charset, query_class)
         if isinstance(iri, URI):
             iri = iri.to_iri().to_unicode()
-        self.iri = iri
+
+        self.pieces = wkz_urls._uri_split(c
 
     def to_uri(self):
         return URI(wkz_urls.iri_to_uri(self.iri))
