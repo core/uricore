@@ -1,7 +1,9 @@
 # encoding: utf-8
 from __future__ import unicode_literals
-from collections import namedtuple
+
 import urlparse
+from collections import namedtuple
+
 import wkz_urls
 
 
@@ -11,11 +13,12 @@ class _RI(object):
                                                'query', 'fragment'))
 
     def __init__(self, ri, charset, query_class=None):
-        scheme, auth, hostname, port, path, querystr, fragment = wkz_urls._uri_split(ri)
+        scheme, auth, hostname, port, path, querystr, fragment = (
+            wkz_urls._uri_split(ri))
 
         query = wkz_urls.url_decode(querystr, charset, cls=query_class)
         self.components = self.RIComponents(scheme, auth, hostname, port, path,
-                                       querystr, query, fragment)
+                                            querystr, query, fragment)
 
     @property
     def ri_components(self):
@@ -27,18 +30,35 @@ class _RI(object):
 class IRI(_RI):
 
     def __init__(self, iri, charset='utf-8', query_class=None):
-        if isinstance(iri, URI):
-            iri = iri.to_iri().to_unicode()
         super(IRI, self).__init__(iri, charset, query_class=query_class)
+
+        # convert URI and str types to unicode
+        if isinstance(iri, URI):
+            iri = unicode(iri.to_iri())
+        elif isinstance(iri, str):
+            iri = iri.decode(encoding=charset)
+
+        # if we don't have a unicode at this point, we can't convert
+        if not isinstance(iri, unicode):
+            msg = "could not convert {0} to IRI: {1}"
+            raise ValueError(msg.format(type(iri), iri))
+
+        self.iri = iri
+
+    def __repr__(self):
+        return "IRI(%s)" % unicode(self)
+
+    def __unicode__(self):
+        return urlparse.urlunsplit(self.ri_components)
+
+    def __str__(self):
+        return str(self.to_uri())
 
     def to_uri(self):
         return URI(wkz_urls.iri_to_uri(self.to_unicode()))
 
     def to_unicode(self):
-        return unicode(urlparse.urlunsplit(self.ri_components))
-
-    def __repr__(self):
-        return "IRI(%s)" % repr(self.to_unicode())
+        return unicode(self)
 
 
 class URI(_RI):
@@ -48,11 +68,20 @@ class URI(_RI):
             uri = uri.to_uri().to_string()
         super(URI, self).__init__(uri, 'ascii', query_class=query_class)
 
+    def __repr__(self):
+        return "URI(%s)" % repr(str(self))
+
+    def __str__(self):
+        return urlparse.urlunsplit(self.ri_components)
+
+    def __unicode__(self):
+        return unicode(self.to_iri())
+
     def to_iri(self):
-        return IRI(wkz_urls.uri_to_iri(self.to_string()))
+        return IRI(wkz_urls.uri_to_iri(str(self)))
 
     def to_string(self):
-        return str(urlparse.urlunsplit(self.ri_components))
+        return str(self)
 
-    def __repr__(self):
-        return "URI(%s)" % repr(self.to_string())
+    def to_unicode(self):
+        return unicode(self)
