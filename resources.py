@@ -4,6 +4,7 @@ import wkz_urls
 
 
 class _RI(object):
+
     def __init__(self, query_class=None):
         self.decoder
 
@@ -26,7 +27,7 @@ class IRI(_RI):
 class URI(_RI):
 
     def __init__(self, uri, query_class=None):
-        super(IRI, self).__init__(query_class)
+        super(URI, self).__init__(query_class)
         if isinstance(uri, IRI):
             uri = uri.to_uri().to_string()
         self.uri = uri
