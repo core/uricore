@@ -26,6 +26,9 @@ class _RI(object):
                 self.components.path, self.components.querystr,
                 self.components.fragment)
 
+    def __repr__(self):
+        return "%s(%r)" % (self.__class__.__name__, str(self))
+
 
 class IRI(_RI):
 
@@ -43,9 +46,6 @@ class IRI(_RI):
             raise ValueError(msg.format(type(iri), iri))
 
         super(IRI, self).__init__(iri, charset, query_class=query_class)
-
-    def __repr__(self):
-        return "IRI(%s)" % unicode(self)
 
     def __unicode__(self):
         return urlparse.urlunsplit(self.ri_components)
@@ -66,9 +66,6 @@ class URI(_RI):
         if isinstance(uri, IRI):
             uri = uri.to_uri().to_string()
         super(URI, self).__init__(uri, 'ascii', query_class=query_class)
-
-    def __repr__(self):
-        return "URI(%s)" % repr(str(self))
 
     def __str__(self):
         return urlparse.urlunsplit(self.ri_components)
