@@ -26,6 +26,38 @@ class _RI(object):
                 self.components.path, self.components.querystr,
                 self.components.fragment)
 
+    @property
+    def scheme(self):
+        return self.components.scheme
+
+    @property
+    def auth(self):
+        return self.components.auth
+
+    @property
+    def hostname(self):
+        return self.components.hostname
+
+    @property
+    def port(self):
+        return self.components.port
+
+    @property
+    def path(self):
+        return self.components.path
+
+    @property
+    def querystr(self):
+        return self.components.querystr
+
+    @property
+    def query(self):
+        return self.components.query
+
+    @property
+    def fragment(self):
+        return self.components.fragment
+
     def __repr__(self):
         return "%s(%r)" % (self.__class__.__name__, str(self))
 
