@@ -22,7 +22,7 @@ class _RI(object):
 class IRI(_RI):
 
     def __init__(self, iri, charset='utf-8', query_class=None):
-        super(IRI, self).__init__(iri, charset, query_class)
+        super(IRI, self).__init__(iri, charset, query_class=query_class)
         if isinstance(iri, URI):
             iri = iri.to_iri().to_unicode()
 
@@ -38,7 +38,7 @@ class IRI(_RI):
 class URI(_RI):
 
     def __init__(self, uri, query_class=None):
-        super(URI, self).__init__(query_class)
+        super(URI, self).__init__(query_class=query_class)
         if isinstance(uri, IRI):
             uri = uri.to_uri().to_string()
         self.uri = uri
