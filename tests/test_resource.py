@@ -1,9 +1,9 @@
 # encoding: utf-8
 import unittest
 
-from httpcore.uri import URI
-from httpcore.iri import IRI
-from httpcore.datastructures import MultiDict
+from resources import URI
+from resources import IRI
+from wkz_datastructures import MultiDict
 
 
 class TestResources(unittest.TestCase):
@@ -35,7 +35,7 @@ class TestResources(unittest.TestCase):
     def test_uri(self):
         iri = IRI(u'http://\N{SNOWMAN}/')
         uri = URI(iri)
-        assert repr(uri) == "URI('http://xn--n3h/')"
+        self.assertEquals(repr(uri), "URI('http://xn--n3h/')")
 
     def test_hashability(self):
         iri = IRI(u'http://\N{SNOWMAN}/')

@@ -1,5 +1,6 @@
 # encoding: utf-8
 from __future__ import unicode_literals
+from collections import namedtuple
 import urlparse
 import wkz_urls
 
@@ -13,14 +14,14 @@ class _RI(object):
         scheme, auth, hostname, port, path, querystr, fragment = wkz_urls._uri_split(ri)
 
         query = wkz_urls.url_decode(querystr, charset, cls=query_class)
-        self.components = RIComponents(scheme, auth, hostname, port, path,
+        self.components = self.RIComponents(scheme, auth, hostname, port, path,
                                        querystr, query, fragment)
 
     @property
     def ri_components(self):
         return (self.components.scheme, self.components.hostname,
                 self.components.path, self.components.querystr,
-                self.component.fragment)
+                self.components.fragment)
 
 
 class IRI(_RI):
@@ -36,6 +37,9 @@ class IRI(_RI):
     def to_unicode(self):
         return unicode(urlparse.urlunsplit(self.ri_components))
 
+    def __repr__(self):
+        return "IRI(%s)" % repr(self.to_unicode())
+
 
 class URI(_RI):
 
@@ -49,3 +53,6 @@ class URI(_RI):
 
     def to_string(self):
         return str(urlparse.urlunsplit(self.ri_components))
+
+    def __repr__(self):
+        return "URI(%s)" % repr(self.to_string())
