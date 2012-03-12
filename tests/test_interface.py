@@ -1,12 +1,12 @@
 # encoding: utf-8
 
 import unittest
-import resource
+import resources
 
 class TestInterface(unittest.TestCase):
 
     def setUp(self):
-        self.fixture = resource.Resource("http://example.com")
+        self.fixture = resources.Resource("http://example.com")
 
     def test_copy_on_update(self):
         url2 = self.fixture.update(scheme="https")
@@ -14,7 +14,7 @@ class TestInterface(unittest.TestCase):
 
     def test_punycode(self):
         ascii_url = 'http://xn--ls8h.la/'
-        url = resource.Resource(u"http://💩.la/")
+        url = resources.Resource(u"http://💩.la/")
         self.assertEquals(url.to_ascii(), ascii_url)
 
     def test_getattr(self):
