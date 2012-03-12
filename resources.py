@@ -30,7 +30,6 @@ class _RI(object):
 class IRI(_RI):
 
     def __init__(self, iri, charset='utf-8', query_class=None):
-        super(IRI, self).__init__(iri, charset, query_class=query_class)
 
         # convert URI and str types to unicode
         if isinstance(iri, URI):
@@ -43,7 +42,7 @@ class IRI(_RI):
             msg = "could not convert {0} to IRI: {1}"
             raise ValueError(msg.format(type(iri), iri))
 
-        self.iri = iri
+        super(IRI, self).__init__(iri, charset, query_class=query_class)
 
     def __repr__(self):
         return "IRI(%s)" % unicode(self)
