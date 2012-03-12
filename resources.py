@@ -1,5 +1,6 @@
 # encoding: utf-8
 from __future__ import unicode_literals
+from wkz_datastructures import MultiDict # TODO: should be from httpcore.datastructures
 import wkz_urls
 
 
@@ -9,6 +10,8 @@ class _RI(object):
                                                'query', 'fragment'))
 
     def __init__(self, ri, charset, query_class=None):
+        if query_class is None:
+            query_class = MultiDict
         scheme, auth, hostname, port, path, querystr, fragment = wkz_urls._uri_split(ri)
 
         query = wkz_urls.url_decode(querystr, charset, cls=query_class)
