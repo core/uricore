@@ -1,3 +1,6 @@
+# encoding: utf-8
+import unittest
+
 from httpcore.uri import URI
 from httpcore.iri import IRI
 from httpcore.datastructures import MultiDict
@@ -65,4 +68,4 @@ class TestResources(unittest.TestCase):
 
     def test_from_lenient(self):
         lenient_iri = IRI.from_lenient(u'http://de.wikipedia.org/wiki/Elf (Begriffskl\xe4rung)')
-        assert repr(lenient_iri) = "URI('http://de.wikipedia.org/wiki/Elf%20%28Begriffskl%C3%A4rung%29')"
+        assert repr(lenient_iri) == "URI('http://de.wikipedia.org/wiki/Elf%20%28Begriffskl%C3%A4rung%29')"
