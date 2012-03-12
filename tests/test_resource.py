@@ -1,4 +1,5 @@
 # encoding: utf-8
+from __future__ import unicode_literals
 import unittest
 
 from resources import URI
@@ -6,15 +7,35 @@ from resources import IRI
 from wkz_datastructures import MultiDict
 
 
-class TestResources(unittest.TestCase):
+class TestIRI(unittest.TestCase):
 
-    def test_iri(self):
-        iri = IRI(u'http://\N{SNOWMAN}/')
-        assert repr(iri) == "IRI('http://xn--n3h/')"
-        assert iri.netloc == u'http://\u2603/'
-        assert iri.hostname == u'\u2603'
-        assert iri.port is None
-        assert iri.path == u'/'
+    def setUp(self):
+        self.iri = IRI("http://\N{SNOWMAN}/")
+
+    def test_repr(self):
+        expect = "IRI(URI('http://xn--n3h/'))".encode('ascii')
+        # alternatively
+        #expect = "IRI('http://xn--n3h/', encoding='idna')".encode('ascii')
+        self.assertEquals(repr(self.iri), expect)
+
+    def test_netloc(self):
+        expect = "http://\u2603/"
+        self.assertEquals(self.iri.netloc, expect)
+
+    def test_hostname(self):
+        expect = "\u2603"
+        self.assertEquals(self.iri.hostname, expect)
+
+    def test_port(self):
+        expect = None
+        self.assertEquals(self.iri.port, expect)
+
+    def test_path(self):
+        expect = "/"
+        self.assertEquals(self.iri.path, expect)
+
+
+class TestResources(unittest.TestCase):
 
     def test_iri_add_port(self):
         iri = IRI(u'http://\N{SNOWMAN}/')
