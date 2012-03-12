@@ -1,17 +1,28 @@
-class Resource(object):
+# encoding: utf-8
+from __future__ import unicode_literals
 
-    __slots__ = ['resource']
 
-    def __init__(self, resource):
-        self.resource = resource
+class _RI(object):
+    def __init__(self, query_class=None):
+        self.decoder
+
+
+class IRI(_RI):
+
+    def __init__(self, iri, charset='utf-8', query_class=None):
+        super(IRI, self).__init__(query_class)
+        if isinstance(iri, URI):
+            iri = iri.to_iri()
+
+    def to_uri(self):
         pass
 
-    def to_ascii(self):
-        pass
+class URI(_RI):
 
-    def split(self):
-        pass
+    def __init__(self, uri, query_class=None):
+        super(IRI, self).__init__(query_class)
+        if isinstance(uri, IRI):
+            uri = uri.to_uri()
 
-    @staticmethod
-    def build(scheme, netloc, path, params,  query, fragment):
+    def to_iri(self):
         pass
