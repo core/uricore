@@ -6,7 +6,7 @@ Example of use::
     >>> from httpcore.iri import IRI
     >>> iri = IRI(u'http://\N{SNOWMAN}/')
     >>> iri
-    IRI(u'u'http://\u2603/'')
+    IRI(u'http://\u2603/')
     >>> uri = URI(iri)
     >>> uri
     URI('http://xn--n3h/')
