@@ -7,7 +7,7 @@ from resources import IRI
 from wkz_datastructures import MultiDict
 
 
-class TestIRI(unittest.TestCase):
+class TestIRISnowman(unittest.TestCase):
 
     def setUp(self):
         self.iri = IRI("http://\N{SNOWMAN}/")
@@ -33,7 +33,7 @@ class TestIRI(unittest.TestCase):
         self.assertEquals(self.iri.path, expect)
 
 
-class TestURI(unittest.TestCase):
+class TestURISnowman(unittest.TestCase):
 
     def setUp(self):
         self.uri = URI("http://\N{SNOWMAN}/")
