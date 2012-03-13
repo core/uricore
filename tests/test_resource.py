@@ -10,27 +10,27 @@ from wkz_datastructures import MultiDict
 class TestIRISnowman(unittest.TestCase):
 
     def setUp(self):
-        self.iri = IRI("http://\N{SNOWMAN}/")
+        self.iri = IRI("http://u:p@www.\N{SNOWMAN}:80/path")
 
     def test_repr(self):
-        expect = "IRI('http://xn--n3h/', encoding='idna')".encode('ascii')
+        expect = "IRI('http://www.xn--n3h/path', encoding='idna')"
+        expect = expect.encode('ascii')
         self.assertEquals(repr(self.iri), expect)
 
     def test_netloc(self):
-        iri = IRI("http://u:p@www.\N{SNOWMAN}:80/path")
         expect = "u:p@www.\u2603:80"
-        self.assertEquals(iri.netloc, expect)
+        self.assertEquals(self.iri.netloc, expect)
 
     def test_hostname(self):
-        expect = "\u2603"
+        expect = "www.\u2603"
         self.assertEquals(self.iri.hostname, expect)
 
     def test_port(self):
-        expect = None
+        expect = "80"
         self.assertEquals(self.iri.port, expect)
 
     def test_path(self):
-        expect = "/"
+        expect = "/path"
         self.assertEquals(self.iri.path, expect)
 
 
