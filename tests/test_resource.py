@@ -33,6 +33,32 @@ class TestIRI(unittest.TestCase):
         self.assertEquals(self.iri.path, expect)
 
 
+class TestURI(unittest.TestCase):
+
+    def setUp(self):
+        self.uri = URI("http://\N{SNOWMAN}/")
+
+    def test_repr(self):
+        expect = "URI('http://xn--n3h/')".encode('ascii')
+        self.assertEquals(repr(self.uri), expect)
+
+    def test_netloc(self):
+        expect = "http://xn--n3h/".encode('ascii')
+        self.assertEquals(self.uri.netloc, expect)
+
+    def test_hostname(self):
+        expect = "xn--n3h".encode('ascii')
+        self.assertEquals(self.uri.hostname, expect)
+
+    def test_port(self):
+        expect = None
+        self.assertEquals(self.uri.port, expect)
+
+    def test_path(self):
+        expect = "/".encode('ascii')
+        self.assertEquals(self.uri.path, expect)
+
+
 class TestResources(unittest.TestCase):
 
     def test_iri_add_port(self):
@@ -51,11 +77,6 @@ class TestResources(unittest.TestCase):
         iriq2 = iriq.update_query(foo=None)
         assert repr(iriq2) == "IRI('http://xn--n3h/')"
         assert repr(iriq.query) == "MultiDict([('foo', '42')])"
-
-    def test_uri(self):
-        iri = IRI(u'http://\N{SNOWMAN}/')
-        uri = URI(iri)
-        self.assertEquals(repr(uri), "URI('http://xn--n3h/')")
 
     def test_hashability(self):
         iri = IRI(u'http://\N{SNOWMAN}/')
