@@ -5,12 +5,14 @@ from collections import defaultdict
 import wkz_urls
 import wkz_datastructures
 
+
 def build_netloc(hostname, auth=None, port=None):
     return "%s%s%s" % (
         auth + '@' if auth else '',
         hostname,
         ':' + str(port) if port else ''
     )
+
 
 def unsplit(**kwargs):
     parts = defaultdict(str)
