@@ -17,8 +17,9 @@ class TestIRISnowman(unittest.TestCase):
         self.assertEquals(repr(self.iri), expect)
 
     def test_netloc(self):
-        expect = "http://\u2603/"
-        self.assertEquals(self.iri.netloc, expect)
+        iri = IRI("http://u:p@www.\N{SNOWMAN}:80/path")
+        expect = "u:p@www.\u2603:80"
+        self.assertEquals(iri.netloc, expect)
 
     def test_hostname(self):
         expect = "\u2603"
