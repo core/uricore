@@ -21,6 +21,22 @@ class _RI(object):
         attributes = ('auth', 'scheme', 'hostname', 'port', 'path', 'fragment')
         return type(self)(ri, self.encoding, self.query_cls)
 
+    def update(self, **kwargs):
+        vals = {
+            'scheme': self.scheme,
+            'hostname': self.hostname,
+            'path': self.path,
+            'querystr': self.querystr,
+            'fragment': self.fragment
+        }.update(kwargs)
+
+        new_ri = urlparse.urlunsplit((
+            vals['scheme'], vals['hostname'],
+            vals['self.path'], vals['querystr'],
+            vals['fragment']
+        ))
+        return type(self)(new_ri, self.encoding, self.query_cls)
+
     @property
     def update_query(self):
         pass
@@ -71,6 +87,9 @@ class _RI(object):
             self.hostname,
             ':' + self.port if self.port else ''
         )
+
+    def __copy__(self):
+        return type(self)(ri, self.encoding, self.query_cls)
 
     def __repr__(self):
         return "%s(%r, encoding='idna')" % (self.__class__.__name__, str(self))
