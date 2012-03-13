@@ -4,6 +4,9 @@ from __future__ import unicode_literals
 import unittest
 import resources
 
+from nose.plugins.skip import SkipTest
+raise SkipTest()
+
 
 class TestInterface(unittest.TestCase):
 
