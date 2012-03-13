@@ -60,7 +60,7 @@ class _RI(object):
         return self.components.fragment
 
     def __repr__(self):
-        return "%s(%r)" % (self.__class__.__name__, str(self))
+        return "%s(%r, encoding='idna')" % (self.__class__.__name__, str(self))
 
 
 class IRI(_RI):

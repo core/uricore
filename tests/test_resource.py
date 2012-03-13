@@ -13,9 +13,7 @@ class TestIRI(unittest.TestCase):
         self.iri = IRI("http://\N{SNOWMAN}/")
 
     def test_repr(self):
-        expect = "IRI(URI('http://xn--n3h/'))".encode('ascii')
-        # alternatively
-        #expect = "IRI('http://xn--n3h/', encoding='idna')".encode('ascii')
+        expect = "IRI('http://xn--n3h/', encoding='idna')".encode('ascii')
         self.assertEquals(repr(self.iri), expect)
 
     def test_netloc(self):
