@@ -99,7 +99,7 @@ class JoinCase(unittest.TestCase):
 
     def test_join_no_hostname_with_hostname(self):
         ri = self.RI('gopher://')
-        result = ri.join(self.RI('//whole.org'))
+        result = ri.join(self.RI('//whole.org/ville'))
         self.assertEquals(result.scheme, 'gopher')
         self.assertEquals(result.hostname, 'whole.org')
-        self.assertEquals(result.path, '/')
+        self.assertEquals(result.path, '/ville')
