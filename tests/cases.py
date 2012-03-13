@@ -90,3 +90,9 @@ class JoinCase(unittest.TestCase):
     def test_join_with_literal_fails(self):
         ri = self.RI('https://secure.pants.net/')
         self.assertRaises(TypeError, ri.join, '/path/to/thing')
+
+    def test_join_no_scheme_with_scheme(self):
+        ri = self.RI('/nowhere')
+        result = ri.join(self.RI('gopher://'))
+        self.assertEquals(result.scheme, 'gopher')
+        self.assertEquals(result.path, '/')

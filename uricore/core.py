@@ -143,6 +143,8 @@ class IRI(object):
         if not isinstance(other, type(self)):
             raise TypeError(type(self))
 
+        # BUG: if only one of the two IRIs being joined have these set,
+        #      these shouldn't get raised
         if not self.scheme or not self.hostname:
             raise Exception # TODO: better errors
         if other.scheme or other.hostname:
