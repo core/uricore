@@ -8,7 +8,8 @@ from resources import IRI
 class TestURISnowman(unittest.TestCase):
 
     def setUp(self):
-        uri = "http://u:p@" + "www.\N{SNOWMAN}".encode('idna') + ":80/path"
+        idna = u"\N{SNOWMAN}".encode('idna')
+        uri = "http://u:p@www.%s:80/path" % idna
         self.uri = URI(uri)
 
     def testFail(self):
