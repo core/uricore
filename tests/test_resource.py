@@ -37,26 +37,27 @@ class TestIRISnowman(unittest.TestCase):
 class TestURISnowman(unittest.TestCase):
 
     def setUp(self):
-        self.uri = URI("http://" + u"\N{SNOWMAN}".encode('idna') + '/')
+        uri = "http://u:p@" + "www.\N{SNOWMAN}".encode('idna') + ":80/path"
+        self.uri = URI(uri)
 
     def test_repr(self):
-        expect = "URI('http://xn--n3h/', encoding='idna')".encode('ascii')
+        expect = "URI('http://www.xn--n3h/path', encoding='idna')".encode('ascii')
         self.assertEquals(repr(self.uri), expect)
 
     def test_netloc(self):
-        expect = "xn--n3h".encode('ascii')
+        expect = "u:p@www.xn--n3h:80".encode('ascii')
         self.assertEquals(self.uri.netloc, expect)
 
     def test_hostname(self):
-        expect = "xn--n3h".encode('ascii')
+        expect = "www.xn--n3h".encode('ascii')
         self.assertEquals(self.uri.hostname, expect)
 
     def test_port(self):
-        expect = None
+        expect = "80"
         self.assertEquals(self.uri.port, expect)
 
     def test_path(self):
-        expect = "/".encode('ascii')
+        expect = "/path".encode('ascii')
         self.assertEquals(self.uri.path, expect)
 
 
