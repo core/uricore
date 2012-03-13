@@ -20,10 +20,6 @@ class _RI(object):
     def __copy__(self):
         return type(self)(ri, self.encoding, self.query_cls)
 
-    def replace(self, attribute, value):
-        attributes = ('auth', 'scheme', 'hostname', 'port', 'path', 'fragment')
-        return type(self)(ri, self.encoding, self.query_cls)
-
     def update(self, **kwargs):
         vals = {
             'scheme': self.scheme,
