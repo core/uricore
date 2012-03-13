@@ -137,11 +137,14 @@ class URI(_RI):
 
         super(URI, self).__init__(uri, encoding, query_cls=query_cls)
 
+    def __repr__(self):
+        return "URI(%s, encoding='idna')" % repr(str(self))
+
     def __str__(self):
         return self._unsplit()
 
     def __unicode__(self):
-        return unicode(self.to_iri())
+        return unicode(str(self))
 
     def to_iri(self):
         return IRI(wkz_urls.uri_to_iri(str(self)))
