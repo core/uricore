@@ -12,7 +12,7 @@ class _RI(object):
                                                'port', 'path', 'querystr',
                                                'query', 'fragment', 'netloc'))
 
-    def __init__(self, ri, encoding, query_class=None):
+    def __init__(self, ri, encoding=None, query_class=None):
         scheme, auth, hostname, port, path, querystr, fragment = (
             wkz_urls._uri_split(ri))
 
@@ -74,24 +74,22 @@ class _RI(object):
 
 
 class IRI(_RI):
-    default_encoding = 'utf8'
 
-    def __init__(self, iri, encoding=None, query_class=None):
+    def __init__(self, iri, query_class=None):
 
         # convert URI and str types to unicode
         if isinstance(iri, URI):
             iri = unicode(iri.to_iri())
-        elif isinstance(iri, str):
-            iri = iri.decode(encoding=encoding or self.default_encoding)
-        elif isinstance(iri, unicode) and encoding is not None:
-            raise ValueError("encoding must be None if iri is unicode")
+
+        if not isinstance(iri, unicode):
+            raise TypeError("iri must be a URI or unicode")
 
         # if we don't have a unicode at this point, we can't convert
         if not isinstance(iri, unicode):
             msg = "could not convert {0} to IRI: {1}"
             raise ValueError(msg.format(type(iri), iri))
 
-        super(IRI, self).__init__(iri, encoding or self.default_encoding, query_class=query_class)
+        super(IRI, self).__init__(iri, query_class=query_class)
 
     def __unicode__(self):
         return self._unsplit()
