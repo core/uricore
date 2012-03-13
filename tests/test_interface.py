@@ -5,12 +5,12 @@ import unittest
 import resources
 
 from nose.plugins.skip import SkipTest
-raise SkipTest()
 
 
 class TestInterface(unittest.TestCase):
 
     def setUp(self):
+        raise SkipTest('old tests')
         self.fixture = resources.Resource("http://example.com")
 
     def test_copy_on_update(self):
