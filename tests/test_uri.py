@@ -3,6 +3,7 @@ import unittest
 
 import cases
 from resources import IRI, URI
+from wkz_datastructures import MultiDict
 
 
 class TestURISnowman(cases.RICase):
@@ -15,7 +16,7 @@ class TestURISnowman(cases.RICase):
         hostname="www.xn--n3h",
         port="80",
         path="/path",
-        #query=???,
+        query=MultiDict([('q', 'arg')]),
         querystr='q=arg',
         fragment="frag",
         netloc="u:p@www.xn--n3h:80",

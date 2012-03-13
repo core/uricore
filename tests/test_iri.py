@@ -4,6 +4,7 @@ import unittest
 
 import cases
 from resources import IRI, URI
+from wkz_datastructures import MultiDict
 
 
 class TestIRISnowman(cases.RICase):
@@ -15,7 +16,7 @@ class TestIRISnowman(cases.RICase):
         hostname="www.\u2603",
         port="80",
         path="/path",
-        #query=???,
+        query=MultiDict([('q', 'arg')]),
         querystr='q=arg',
         fragment="frag",
         netloc="u:p@www.\u2603:80",

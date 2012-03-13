@@ -19,8 +19,7 @@ class RICase(unittest.TestCase):
         self.assertEquals(self.ri.path, self.expect['path'])
 
     def test_query(self):
-        raise NotImplementedError("make test!!1!")
-        #self.assertEquals(self.ri.query, self.expect['query'])
+        self.assertEquals(self.ri.query, self.expect['query'])
 
     def test_querystr(self):
         self.assertEquals(self.ri.querystr, self.expect['querystr'])
