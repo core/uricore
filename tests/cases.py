@@ -6,6 +6,11 @@ from wkz_datastructures import MultiDict
 
 
 class RICase(unittest.TestCase):
+    # Tests expected properties values
+    #
+    # Class variables:
+    # ri = URI or IRI object
+    # expect = dict of expected results
 
     def test_scheme_baby(self):
         self.assertEquals(self.ri.scheme, self.expect['scheme'])
@@ -39,6 +44,10 @@ class RICase(unittest.TestCase):
 
 
 class JoinCase(unittest.TestCase):
+    # Tests expected join behaviour
+    #
+    # Class variables:
+    # RI = IRI/URI constructor given a unicode object
 
     def test_join_path_to_netloc(self):
         ri = self.RI('http://localhost:8000').join(self.RI('/path/to/file'))
