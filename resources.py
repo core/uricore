@@ -122,6 +122,45 @@ class _RI(object):
     def netloc(self):
         return build_netloc(self.hostname, self.auth, self.port)
 
+    def join(self, other):
+        if not isinstance(other, type(self)):
+            raise TypeError
+
+        if not self.scheme or not self.hostname:
+            raise Exception # TODO: better errors
+        if other.scheme or other.hostname:
+            raise Exception
+
+        vals = {
+            'scheme': self.scheme,
+            'auth': self.auth,
+            'hostname': self.hostname,
+            'port': self.port,
+            'path': self.path,
+            'querystr': self.querystr,
+            'fragment': self.fragment,
+        }
+
+        if other.path:
+            if self.querystr or self.fragment:
+                raise Exception
+            vals['path'] = '/'.join([self.path, other.path]).replace('//', '/')
+
+        if other.querystr:
+            if self.fragment:
+                raise Exception
+            query = self.query
+            query.update(other.query)
+            vals['querystr'] = '&'.join([('%s=%s' % (k,v)) for (k,v) in query.items()]) # TODO: do this properly
+
+        if other.fragment:
+            if self.fragment:
+                raise Exception
+            vals['fragment'] = other.fragment
+
+        new_ri = unsplit(**vals)
+        return type(self)(new_ri, encoding=self.encoding, query_cls=self.query_cls)
+
 
 class IRI(_RI):
 

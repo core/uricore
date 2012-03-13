@@ -51,9 +51,6 @@ class JoinCase(unittest.TestCase):
     # Class variables:
     # RI = IRI/URI constructor given a unicode object
 
-    def setUp(self):
-        raise SkipTest('join not implemented')
-
     def test_join_path_to_netloc(self):
         ri = self.RI('http://localhost:8000').join(self.RI('/path/to/file'))
         self.assertEquals(ri.scheme, 'http')
@@ -80,13 +77,13 @@ class JoinCase(unittest.TestCase):
     def test_join_query_to_query(self):
         ri = self.RI('http://localhost:8000/path/to/file?yes=no').join(self.RI('?left=right'))
         self.assertEquals(ri.path, '/path/to/file')
-        self.assertEquals(self.riquery, MultiDict(dict(yes='no', left='right')))
+        self.assertEquals(ri.query, MultiDict(dict(yes='no', left='right')))
         self.assertEquals(ri.querystr, 'yes=no&left=right')
 
     def test_join_fragment_to_query(self):
         ri = self.RI('http://rubberchick.en/path/to/file?yes=no').join(self.RI('#giblets'))
         self.assertEquals(ri.path, '/path/to/file')
-        self.assertEquals(ri.query, MultiDict(dict(yes='no', left='right')))
+        self.assertEquals(ri.query, MultiDict(dict(yes='no',)))
         self.assertEquals(ri.querystr, 'yes=no')
         self.assertEquals(ri.fragment, 'giblets')
 
