@@ -2,8 +2,6 @@
 from __future__ import unicode_literals
 import unittest
 
-from nose.plugins.skip import SkipTest
-
 from uricore.wkz_datastructures import MultiDict
 
 
