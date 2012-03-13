@@ -7,12 +7,10 @@ import wkz_datastructures
 
 class _RI(object):
 
-    def __init__(self, ri, encoding=None, query_cls=None):
-        self.encoding = encoding
+    def __init__(self, ri, **kwargs):
+        self.encoding = kwargs.get('encoding')
         #NOTE: might be better to subclass instead of pass a query_cls around
-        if query_cls is None:
-            query_cls = wkz_datastructures.MultiDict
-        self.query_cls = query_cls
+        self.query_cls = kwargs.get('query_cls', wkz_datastructures.MultiDict)
 
         (self._scheme, self._auth, self._hostname, self._port, self._path,
          self._querystr, self._fragment) = wkz_urls._uri_split(ri)
@@ -24,14 +22,16 @@ class _RI(object):
             'path': self.path,
             'querystr': self.querystr,
             'fragment': self.fragment
-        }.update(kwargs)
+        }
+        if len(kwargs):
+            vals.update(kwargs)
 
         new_ri = urlparse.urlunsplit((
             vals['scheme'], vals['hostname'],
-            vals['self.path'], vals['querystr'],
+            vals['path'], vals['querystr'],
             vals['fragment']
         ))
-        return type(self)(new_ri, self.encoding, self.query_cls)
+        return type(self)(new_ri, encoding=self.encoding, query_cls=self.query_cls)
 
     @property
     def update_query(self):
@@ -100,7 +100,7 @@ class _RI(object):
 
 class IRI(_RI):
 
-    def __init__(self, iri, query_cls=None):
+    def __init__(self, iri, **kwargs):
 
         # convert URI and str types to unicode
         if isinstance(iri, URI):
@@ -114,7 +114,7 @@ class IRI(_RI):
             msg = "could not convert {0} to IRI: {1}"
             raise ValueError(msg.format(type(iri), iri))
 
-        super(IRI, self).__init__(iri, query_cls=query_cls)
+        super(IRI, self).__init__(iri, **kwargs)
 
     def __repr__(self):
         return "IRI(%s)" % str(self)
@@ -131,7 +131,7 @@ class IRI(_RI):
 
 class URI(_RI):
 
-    def __init__(self, uri, encoding='utf-8', query_cls=None):
+    def __init__(self, uri, encoding='utf-8', **kwargs):
 
         if isinstance(uri, unicode):
             raise TypeError("uri must be a string or IRI")
@@ -139,7 +139,7 @@ class URI(_RI):
         if isinstance(uri, IRI):
             uri = str(uri.to_uri())
 
-        super(URI, self).__init__(uri, encoding, query_cls=query_cls)
+        super(URI, self).__init__(uri, encoding=encoding, **kwargs)
 
     def __repr__(self):
         return "URI(%s, encoding='idna')" % repr(str(self))

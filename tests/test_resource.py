@@ -13,7 +13,7 @@ class TestResources(unittest.TestCase):
 
     def test_iri_add_port(self):
         iri = IRI(u'http://\N{SNOWMAN}/')
-        new_iri = iri.replace(port=8000)
+        new_iri = iri.update(port=8000)
         assert repr(new_iri) == "IRI('http://xn--n3h:8000/')"
         assert iri.port == 8000
         assert iri.port is None
