@@ -1,6 +1,10 @@
 # urilib
 
-Example of use::
+**WARNING: Rough, raw, and fast changing code. Check back later. ;-)**
+
+--
+
+Example of use:
 
     >>> from httpcore.uri import URI
     >>> from httpcore.iri import IRI
