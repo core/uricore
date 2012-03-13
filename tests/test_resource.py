@@ -34,8 +34,11 @@ class TestResources(unittest.TestCase):
 
     def test_hashability(self):
         iri = IRI(u'http://\N{SNOWMAN}/')
-        uri = URI('http://xn--n3h/')
-        assert hash(iri) != hash(uri)
+        iri2 = IRI(u'http://\N{SNOWMAN}/')
+        uri = iri.to_uri()
+
+        self.assertNotEquals(hash(iri), hash(uri))
+        self.assertEquals(hash(iri), hash(iri2))
 
     def test_configurable_multi_dict_class(self):
         class CustomMultiDict(MultiDict):
