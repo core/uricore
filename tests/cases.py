@@ -89,3 +89,7 @@ class JoinCase(unittest.TestCase):
         self.assertEquals(ri.query, MultiDict(dict(yes='no', left='right')))
         self.assertEquals(ri.querystr, 'yes=no')
         self.assertEquals(ri.fragment, 'giblets')
+
+    def test_join_with_literal_fails(self):
+        ri = self.RI('https://secure.pants.net/')
+        self.assertRaises(TypeError, ri.join, '/path/to/thing')

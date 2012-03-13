@@ -46,24 +46,6 @@ class TestResources(unittest.TestCase):
         iri = IRI(u'http://\N{SNOWMAN}/', query_cls=CustomMultiDict)
         self.assertTrue(isinstance(iri.query, CustomMultiDict))
 
-    def test_join_iri(self):
-        iri_d = IRI(u'http://\N{SNOWMAN}/')
-        iri_p = IRI(u'/path/to/thing')
-        iri_j = iri_d.join(iri_p)
-        self.assertEquals(repr(iri_j), "IRI(u'http://\u2603/path/to/thing')")
-
-    def test_join_uri(self):
-        uri_d = URI('http://\N{SNOWMAN}/')
-        uri_p = URI('/path/to/thing')
-        uri_j = uri_d.join(uri_p)
-        self.assertEquals(repr(uri_j), "URI('http://\u2603/path/to/thing')")
-
-    def test_cant_join_strings(self):
-        iri_d = IRI(u'http://\N{SNOWMAN}/')
-        self.assertRaises(TypeError, iri_d.join, u'/path/to/thing')
-        uri_d = URI(u'http://\N{SNOWMAN}/')
-        self.assertRaises(TypeError, uri_d.join, '/path/to/thing')
-
     def test_from_lenient(self):
         lenient_iri = IRI.from_lenient(u'http://de.wikipedia.org/wiki/Elf (Begriffskl\xe4rung)')
         self.assertEquals(repr(lenient_iri), "URI('http://de.wikipedia.org/wiki/Elf%20%28Begriffskl%C3%A4rung%29')")
