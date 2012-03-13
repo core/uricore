@@ -134,7 +134,7 @@ class URI(_RI):
 
     def __init__(self, uri, encoding='utf-8', query_cls=None):
         if isinstance(uri, unicode):
-            raise TypeError("uri must be a strings or IRI")
+            raise TypeError("uri must be a string or IRI")
 
         if isinstance(uri, IRI):
             uri = str(uri.to_uri())
