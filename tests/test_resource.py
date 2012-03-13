@@ -21,12 +21,12 @@ class TestResources(unittest.TestCase):
     def test_iri_update_query(self):
         iri = IRI(u'http://\N{SNOWMAN}/')
         iriq = iri.update_query({'foo': u'42'})
-        assert repr(iri.query) == "MultiDict()"
-        assert repr(iriq) == "IRI('http://xn--n3h/?foo=42')"
-        assert repr(iriq.query) == "MultiDict([('foo', '42')])"
+        self.assertEquals(repr(iri.query), "MultiDict()")
+        self.assertEquals(repr(iriq), "IRI('http://xn--n3h/?foo=42')")
+        self.assertEquals(repr(iriq.query), "MultiDict([('foo', '42')])")
         iriq2 = iriq.update_query(foo=None)
-        assert repr(iriq2) == "IRI('http://xn--n3h/')"
-        assert repr(iriq.query) == "MultiDict([('foo', '42')])"
+        self.assertEquals(repr(iriq2), "IRI('http://xn--n3h/')")
+        self.assertEquals(repr(iriq.query), "MultiDict([('foo', '42')])")
 
     def test_query_is_immutable(self):
         self.uri.query.add("foo", "baz")
@@ -44,19 +44,19 @@ class TestResources(unittest.TestCase):
         class CustomMultiDict(MultiDict):
             pass
         iri = IRI(u'http://\N{SNOWMAN}/', query_cls=CustomMultiDict)
-        assert isinstance(iri.query, CustomMultiDict)
+        self.assertTrue(isinstance(iri.query, CustomMultiDict))
 
     def test_join_iri(self):
         iri_d = IRI(u'http://\N{SNOWMAN}/')
         iri_p = IRI(u'/path/to/thing')
         iri_j = iri_d.join(iri_p)
-        assert repr(iri_j) == "IRI(u'http://\u2603/path/to/thing')"
+        self.assertEquals(repr(iri_j), "IRI(u'http://\u2603/path/to/thing')")
 
     def test_join_uri(self):
         uri_d = URI('http://\N{SNOWMAN}/')
         uri_p = URI('/path/to/thing')
         uri_j = uri_d.join(uri_p)
-        assert repr(uri_j) == "URI('http://\u2603/path/to/thing')"
+        self.assertEquals(repr(uri_j), "URI('http://\u2603/path/to/thing')")
 
     def test_cant_join_strings(self):
         iri_d = IRI(u'http://\N{SNOWMAN}/')
@@ -66,4 +66,4 @@ class TestResources(unittest.TestCase):
 
     def test_from_lenient(self):
         lenient_iri = IRI.from_lenient(u'http://de.wikipedia.org/wiki/Elf (Begriffskl\xe4rung)')
-        assert repr(lenient_iri) == "URI('http://de.wikipedia.org/wiki/Elf%20%28Begriffskl%C3%A4rung%29')"
+        self.assertEquals(repr(lenient_iri), "URI('http://de.wikipedia.org/wiki/Elf%20%28Begriffskl%C3%A4rung%29')")
