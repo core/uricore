@@ -7,7 +7,7 @@ from resources import IRI, URI
 
 class TestURISnowman(cases.RICase):
 
-    ri = URI("http://u:p@www.%s:80/path#frag" %
+    ri = URI("http://u:p@www.%s:80/path?q=arg#frag" %
              u"\N{SNOWMAN}".encode('idna'))
     expect = dict(
         scheme="http",
@@ -16,10 +16,10 @@ class TestURISnowman(cases.RICase):
         port="80",
         path="/path",
         #query=???,
-        #querystr=???,
+        querystr='q=arg',
         fragment="frag",
         netloc="u:p@www.xn--n3h:80",
-        repr="URI('http://u:p@www.xn--n3h:80/path#frag', encoding='idna')"
+        repr="URI('http://u:p@www.xn--n3h:80/path?q=arg#frag', encoding='idna')"
     )
 
 

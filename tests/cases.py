@@ -23,8 +23,7 @@ class RICase(unittest.TestCase):
         #self.assertEquals(self.ri.query, self.expect['query'])
 
     def test_querystr(self):
-        raise NotImplementedError("make test!!1!")
-        #self.assertEquals(self.ri.querystr, self.expect['querystr'])
+        self.assertEquals(self.ri.querystr, self.expect['querystr'])
 
     def test_fragment(self):
         self.assertEquals(self.ri.fragment, self.expect['fragment'])

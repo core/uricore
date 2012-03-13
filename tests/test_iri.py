@@ -8,7 +8,7 @@ from resources import IRI, URI
 
 class TestIRISnowman(cases.RICase):
 
-    ri = IRI("http://u:p@www.\N{SNOWMAN}:80/path#frag")
+    ri = IRI("http://u:p@www.\N{SNOWMAN}:80/path?q=arg#frag")
     expect = dict(
         scheme="http",
         auth="u:p",
@@ -16,10 +16,10 @@ class TestIRISnowman(cases.RICase):
         port="80",
         path="/path",
         #query=???,
-        #querystr=???,
+        querystr='q=arg',
         fragment="frag",
         netloc="u:p@www.\u2603:80",
-        repr="IRI(u'http://u:p@www.\\u2603:80/path#frag')".encode('ascii')
+        repr="IRI(u'http://u:p@www.\\u2603:80/path?q=arg#frag')".encode('ascii')
     )
 
 
