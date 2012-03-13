@@ -6,10 +6,8 @@ from resources import IRI, URI
 
 class TestURISnowman(unittest.TestCase):
 
-    def setUp(self):
-        idna = u"\N{SNOWMAN}".encode('idna')
-        uri = "http://u:p@www.%s:80/path" % idna
-        self.uri = URI(uri)
+    uri = URI("http://u:p@www.%s:80/path" %
+              u"\N{SNOWMAN}".encode('idna'))
 
     def test_repr(self):
         expect = "URI('http://www.xn--n3h/path', encoding='idna')".encode('ascii')
@@ -31,13 +29,14 @@ class TestURISnowman(unittest.TestCase):
         expect = "/path".encode('ascii')
         self.assertEquals(self.uri.path, expect)
 
-    def test_iri_input(self):
-        iri = IRI(self.uri)
-        self.assertEquals(str(self.uri), str(URI(iri)))
-        self.assertEquals(unicode(self.uri), unicode(URI(iri)))
-
 
 class TestURI(unittest.TestCase):
 
     def test_unicode_input_fails(self):
         self.assertRaises(TypeError, URI, u"http://www.example.com/")
+
+    def test_iri_input(self):
+        uri = TestURISnowman.uri
+        iri = IRI(uri)
+        self.assertEquals(str(uri), str(URI(iri)))
+        self.assertEquals(unicode(uri), unicode(URI(iri)))

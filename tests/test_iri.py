@@ -8,8 +8,7 @@ from resources import IRI, URI
 
 class TestIRISnowman(unittest.TestCase):
 
-    def setUp(self):
-        self.iri = IRI("http://u:p@www.\N{SNOWMAN}:80/path")
+    iri = IRI("http://u:p@www.\N{SNOWMAN}:80/path")
 
     def test_repr(self):
         expect = "IRI('http://www.xn--n3h/path', encoding='idna')"
@@ -32,13 +31,14 @@ class TestIRISnowman(unittest.TestCase):
         expect = "/path"
         self.assertEquals(self.iri.path, expect)
 
-    def test_iri_input(self):
-        uri = URI(self.iri)
-        self.assertEquals(str(self.iri), str(IRI(uri)))
-        self.assertEquals(unicode(self.iri), unicode(IRI(uri)))
-
 
 class TestIRI(unittest.TestCase):
 
     def test_str_input_fails(self):
         self.assertRaises(TypeError, IRI, 'http://example.com'.encode('ascii'))
+
+    def test_uri_input(self):
+        iri = TestIRISnowman.iri
+        uri = URI(iri)
+        self.assertEquals(str(iri), str(IRI(uri)))
+        self.assertEquals(unicode(iri), unicode(IRI(uri)))
