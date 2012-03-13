@@ -6,7 +6,7 @@ from wkz_datastructures import MultiDict
 
 
 class RICase(unittest.TestCase):
-    # Tests expected properties values
+    # Test properties and representations
     #
     # Class variables:
     # ri = URI or IRI object
@@ -44,7 +44,7 @@ class RICase(unittest.TestCase):
 
 
 class JoinCase(unittest.TestCase):
-    # Tests expected join behaviour
+    # Test join
     #
     # Class variables:
     # RI = IRI/URI constructor given a unicode object
