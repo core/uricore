@@ -4,7 +4,7 @@ import unittest
 
 from nose.plugins.skip import SkipTest
 
-from wkz_datastructures import MultiDict
+from uricore.wkz_datastructures import MultiDict
 
 
 class RICase(unittest.TestCase):

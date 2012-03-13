@@ -2,9 +2,10 @@
 from __future__ import unicode_literals
 import unittest
 
+from uricore import IRI, URI
+from uricore.wkz_datastructures import MultiDict
+
 import cases
-from resources import IRI, URI
-from wkz_datastructures import MultiDict
 
 
 class TestIRIInputs(unittest.TestCase):

@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 import urlparse
 from collections import defaultdict
 
-import wkz_urls
-import wkz_datastructures
+from . import wkz_urls  # temporary module name
+from . import wkz_datastructures  # temporary module name
 
 
 def build_netloc(hostname, auth=None, port=None):
@@ -41,7 +41,7 @@ class IRI(object):
             iri = unicode(iri)
 
         if not isinstance(iri, unicode):
-            raise TypeError("iri must be a unicode or IRI/URI")
+            raise TypeError("iri must be a unicode or IRI/URI: %s" % type(iri))
 
         # if we don't have a unicode at this point, we can't convert
         if not isinstance(iri, unicode):
@@ -176,6 +176,42 @@ class IRI(object):
             vals['fragment'] = other.fragment
 
         return type(self)(unsplit(**vals), query_cls=self.query_cls)
+
+
+class URI(object):
+
+    def __init__(self, uri, encoding='utf-8'):
+
+        if isinstance(uri, str):
+            self._iri = IRI(uri.decode(encoding))
+        elif isinstance(uri, IRI):
+            self._iri = IRI(uri)
+        else:
+            raise TypeError("uri must be a string or IRI")
+
+        self.encoding = encoding
+
+    def __getattr__(self, name):
+        return getattr(self._iri, name)
+
+    def __repr__(self):
+        return "URI(%r, encoding='%s')" % (str(self), self.encoding)
+
+    def __str__(self):
+        return self._iri.encode(encoding=self.encoding)
+
+    def __unicode__(self):
+        return unicode(self._iri)
+
+    def join(self, other):
+        if not isinstance(other, type(self)):
+            raise TypeError(type(self))
+
+        iri = self._iri.join(IRI(other))
+        return URI(iri)
+
+    def to_iri(self):
+        return IRI(wkz_urls.uri_to_iri(self))
 
 
 class URI(object):

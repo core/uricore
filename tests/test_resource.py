@@ -3,12 +3,11 @@ import unittest
 
 from nose.plugins.skip import SkipTest
 
-from resources import URI
-from resources import IRI
-from wkz_datastructures import MultiDict
+from uricore import IRI, URI
+from uricore.wkz_datastructures import MultiDict
 
 
-class TestResources(unittest.TestCase):
+class TestURICore(unittest.TestCase):
 
     def setUp(self):
         self.uri = URI("http://example.com?foo=bar")
@@ -53,3 +52,30 @@ class TestResources(unittest.TestCase):
         raise SkipTest("not implemented yet")
         lenient_iri = IRI.from_lenient(u'http://de.wikipedia.org/wiki/Elf (Begriffskl\xe4rung)')
         self.assertEquals(repr(lenient_iri), "URI('http://de.wikipedia.org/wiki/Elf%20%28Begriffskl%C3%A4rung%29')")
+
+
+class TestInterface(unittest.TestCase):
+
+    def setUp(self):
+        raise SkipTest('old tests')
+        self.fixture = resources.Resource("http://example.com")
+
+    def test_copy_on_update(self):
+        url2 = self.fixture.update(scheme="https")
+        self.assertNotEquals(self.fixture, url2)
+
+    def test_idn_ascii_encoding(self):
+        ascii_url = "http://xn--bcher-kva.ch/".encode('ascii')
+        url = resources.Resource(u"http://Bücher.ch/")
+        self.assertEquals(url.to_ascii(), ascii_url)
+
+    def test_idn_ascii_poo_encoding(self):
+        ascii_url = "http://xn--ls8h.la/".encode('ascii')
+        url = resources.Resource("http://💩.la/")
+        self.assertEquals(url.to_ascii(), ascii_url)
+
+    def test_getattr(self):
+        self.assertEquals(self.fixture.scheme, 'http')
+
+    def test_setattr(self):
+        self.assertRaises(AttributeError, setattr, self.fixture.scheme, "")

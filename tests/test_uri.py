@@ -1,9 +1,10 @@
 # encoding: utf-8
 import unittest
 
+from uricore import IRI, URI
+from uricore.wkz_datastructures import MultiDict
+
 import cases
-from resources import IRI, URI
-from wkz_datastructures import MultiDict
 
 
 class TestURI(unittest.TestCase):
