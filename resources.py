@@ -76,13 +76,12 @@ class _RI(object):
 class IRI(_RI):
 
     def __init__(self, iri, query_class=None):
-
         # convert URI and str types to unicode
         if isinstance(iri, URI):
             iri = unicode(iri.to_iri())
 
         if not isinstance(iri, unicode):
-            raise TypeError("iri must be a URI or unicode")
+            raise TypeError("iri must be a unicode or URI")
 
         # if we don't have a unicode at this point, we can't convert
         if not isinstance(iri, unicode):
@@ -105,16 +104,10 @@ class URI(_RI):
 
     def __init__(self, uri, encoding='utf8', query_class=None):
         if isinstance(uri, unicode):
-            raise TypeError("Expected ascii encoded uri. For unicode try IRI")
+            raise TypeError("uri must be a strings or IRI")
+
         if isinstance(uri, IRI):
             uri = str(uri.to_uri())
-
-        elif isinstance(uri, unicode):
-            encoding = 'utf8'
-            uri = uri.encode(encoding)
-
-        if not isinstance(uri, str):
-            raise TypeError("uri must be a IRI or str")
 
         super(URI, self).__init__(uri, encoding, query_class=query_class)
 
