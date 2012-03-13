@@ -6,7 +6,7 @@ import cases
 from resources import IRI, URI
 
 
-class TestIRISnowman(cases.RICase, unittest.TestCase):
+class TestIRISnowman(cases.RICase):
 
     ri = IRI("http://u:p@www.\N{SNOWMAN}:80/path#frag")
     expect = dict(
