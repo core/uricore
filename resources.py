@@ -92,13 +92,13 @@ class _RI(object):
     def query(self):
         """Return a new instance of query_cls."""
 
-        encoding = self.encoding
-        querystr = self.querystr
-        if isinstance(querystr, unicode):
-            encoding = 'utf-8'
-            querystr = querystr.encode(encoding)
-
         if not hasattr(self, '_decoded_query'):
+            encoding = self.encoding
+            querystr = self.querystr
+            if isinstance(querystr, unicode):
+                encoding = 'utf-8'
+                querystr = querystr.encode(encoding)
+
             self._decoded_query = list(wkz_urls._url_decode_impl(
                 querystr.split('&'), encoding,
                 False, True, 'replace'
