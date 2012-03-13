@@ -104,6 +104,8 @@ class IRI(_RI):
 class URI(_RI):
 
     def __init__(self, uri, encoding='utf8', query_class=None):
+        if isinstance(uri, unicode):
+            raise TypeError("Expected ascii encoded uri. For unicode try IRI")
         if isinstance(uri, IRI):
             uri = str(uri.to_uri())
 
