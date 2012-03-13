@@ -20,6 +20,9 @@ class _RI(object):
         self.components = self.RIComponents(scheme, auth, hostname, port, path,
                                             querystr, query, fragment)
 
+    def __repr__(self):
+        return "%s(%r, encoding='idna')" % (self.__class__.__name__, str(self))
+
     @property
     def scheme(self):
         return self.components.scheme
@@ -59,9 +62,6 @@ class _RI(object):
             self.hostname,
             ':' + self.port if self.port else ''
         )
-
-    def __repr__(self):
-        return "%s(%r, encoding='idna')" % (self.__class__.__name__, str(self))
 
     def _unsplit(self):
         return urlparse.urlunsplit((
