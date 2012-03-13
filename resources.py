@@ -20,8 +20,9 @@ class _RI(object):
     def __copy__(self):
         return type(self)(ri, self.encoding, self.query_cls)
 
-    def __repr__(self):
-        return "%s(%r, encoding='idna')" % (self.__class__.__name__, str(self))
+    def replace(self, attribute, value):
+        attributes = ('auth', 'scheme', 'hostname', 'port', 'path', 'fragment')
+        return type(self)(ri, self.encoding, self.query_cls)
 
     def update(self, **kwargs):
         vals = {
@@ -116,11 +117,14 @@ class IRI(_RI):
 
         super(IRI, self).__init__(iri, query_cls=query_cls)
 
-    def __unicode__(self):
-        return self._unsplit()
+    def __repr__(self):
+        return "IRI(%s)" % str(self)
 
     def __str__(self):
-        return str(self.to_uri())
+        return repr(unicode(self))
+
+    def __unicode__(self):
+        return self._unsplit()
 
     def to_uri(self):
         return URI(wkz_urls.iri_to_uri(self))
