@@ -141,7 +141,7 @@ class IRI(object):
 
     def join(self, other):
         if not isinstance(other, type(self)):
-            raise TypeError
+            raise TypeError(type(self))
 
         if not self.scheme or not self.hostname:
             raise Exception # TODO: better errors
@@ -168,15 +168,14 @@ class IRI(object):
                 raise Exception
             query = self.query
             query.update(other.query)
-            vals['querystr'] = '&'.join([('%s=%s' % (k,v)) for (k,v) in query.items()]) # TODO: do this properly
+            vals['querystr'] = '&'.join([('%s=%s' % (k, v)) for (k, v) in query.items()])  # TODO: do this properly
 
         if other.fragment:
             if self.fragment:
                 raise Exception
             vals['fragment'] = other.fragment
 
-        new_ri = unsplit(**vals)
-        return type(self)(new_ri, encoding=self.encoding, query_cls=self.query_cls)
+        return type(self)(unsplit(**vals), query_cls=self.query_cls)
 
 
 class URI(object):
@@ -203,6 +202,13 @@ class URI(object):
 
     def __unicode__(self):
         return unicode(self._iri)
+
+    def join(self, other):
+        if not isinstance(other, type(self)):
+            raise TypeError(type(self))
+
+        iri = self._iri.join(IRI(other))
+        return iri.to_uri()
 
     def to_iri(self):
         return IRI(wkz_urls.uri_to_iri(self))
