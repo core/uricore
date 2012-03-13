@@ -1,6 +1,8 @@
 # encoding: utf-8
 import unittest
 
+from nose.plugins.skip import SkipTest
+
 from resources import URI
 from resources import IRI
 from wkz_datastructures import MultiDict
@@ -19,6 +21,7 @@ class TestResources(unittest.TestCase):
         self.assertEquals(iri.port, None)
 
     def test_iri_update_query(self):
+        raise SkipTest('not implemented')
         iri = IRI(u'http://\N{SNOWMAN}/')
         iriq = iri.update_query({'foo': u'42'})
         self.assertEquals(repr(iri.query), "MultiDict()")
@@ -47,5 +50,6 @@ class TestResources(unittest.TestCase):
         self.assertTrue(isinstance(iri.query, CustomMultiDict))
 
     def test_from_lenient(self):
+        raise SkipTest("not implemented yet")
         lenient_iri = IRI.from_lenient(u'http://de.wikipedia.org/wiki/Elf (Begriffskl\xe4rung)')
         self.assertEquals(repr(lenient_iri), "URI('http://de.wikipedia.org/wiki/Elf%20%28Begriffskl%C3%A4rung%29')")
