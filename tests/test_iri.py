@@ -1,8 +1,10 @@
 # encoding: utf-8
 from __future__ import unicode_literals
+
 import unittest
 
-from resources import IRI
+from resources import IRI, URI
+
 
 class TestIRISnowman(unittest.TestCase):
 
@@ -29,3 +31,14 @@ class TestIRISnowman(unittest.TestCase):
     def test_path(self):
         expect = "/path"
         self.assertEquals(self.iri.path, expect)
+
+    def test_iri_input(self):
+        uri = URI(self.iri)
+        self.assertEquals(str(self.iri), str(IRI(uri)))
+        self.assertEquals(unicode(self.iri), unicode(IRI(uri)))
+
+
+class TestIRI(unittest.TestCase):
+
+    def test_str_input_fails(self):
+        self.assertRaises(TypeError, IRI, 'http://example.com'.encode('ascii'))
