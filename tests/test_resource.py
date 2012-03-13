@@ -29,7 +29,7 @@ class TestResources(unittest.TestCase):
         assert repr(iriq.query) == "MultiDict([('foo', '42')])"
 
     def test_query_is_immutable(self):
-        self.assertRaises(TypeError, self.uri.query.add, "foo", "baz")
+        self.uri.query.add("foo", "baz")
         self.assertEquals(set(['bar']), set(self.uri.query.getlist('foo')))
 
     def test_hashability(self):
@@ -40,7 +40,7 @@ class TestResources(unittest.TestCase):
     def test_configurable_multi_dict_class(self):
         class CustomMultiDict(MultiDict):
             pass
-        iri = IRI(u'http://\N{SNOWMAN}/', query_class=CustomMultiDict)
+        iri = IRI(u'http://\N{SNOWMAN}/', query_cls=CustomMultiDict)
         assert isinstance(iri.query, CustomMultiDict)
 
     def test_join_iri(self):

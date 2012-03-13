@@ -1,72 +1,68 @@
 # encoding: utf-8
-from __future__ import unicode_literals
-
 import urlparse
-from collections import namedtuple
 
 import wkz_urls
 import wkz_datastructures
 
 
 class _RI(object):
-    RIComponents = namedtuple('RIComponents', ('scheme', 'auth', 'hostname',
-                                               'port', 'path', 'querystr',
-                                               'query', 'fragment'))
 
-    def __init__(self, ri, encoding=None, query_class=None):
+    def __init__(self, ri, encoding=None, query_cls=None):
         self.encoding = encoding
-        self.query_class = query_class
+        #NOTE: might be better to subclass instead of pass a query_cls around
+        if query_cls is None:
+            query_cls = wkz_datastructures.MultiDict
+        self.query_cls = query_cls
 
-        scheme, auth, hostname, port, path, querystr, fragment = (
-            wkz_urls._uri_split(ri))
-
-        query = wkz_urls.url_decode(querystr, encoding, cls=query_class)
-        self.components = self.RIComponents(scheme, auth, hostname, port, path,
-                                            querystr, query, fragment)
-
-    def __repr__(self):
-        return "%s(%r, encoding='idna')" % (self.__class__.__name__, str(self))
+        (self._scheme, self._auth, self._hostname, self._port, self._path,
+         self._querystr, self._fragment) = wkz_urls._uri_split(ri)
 
     def replace(self, attribute, value):
         attributes = ('auth', 'scheme', 'hostname', 'port', 'path', 'fragment')
-        return type(self)(ri, self.encoding, self.query_class)
+        return type(self)(ri, self.encoding, self.query_cls)
 
     @property
     def update_query(self):
-        # TODO: return immutable MultiDict
         pass
 
     @property
     def scheme(self):
-        return self.components.scheme
+        return self._scheme
 
     @property
     def auth(self):
-        return self.components.auth
+        return self._auth
 
     @property
     def hostname(self):
-        return self.components.hostname
+        return self._hostname
 
     @property
     def port(self):
-        return self.components.port
+        return self._port
 
     @property
     def path(self):
-        return self.components.path
+        return self._path
 
     @property
     def querystr(self):
-        return self.components.querystr
+        return self._querystr
 
     @property
     def query(self):
-        return wkz_datastructures.ImmutableMultiDict(self.components.query)
+        """Return a new instance of query_cls."""
+
+        if not hasattr(self, '_decoded_query'):
+            self._decoded_query = list(wkz_urls._url_decode_impl(
+                str(self.querystr).split('&'), self.encoding,
+                False, True, 'replace'
+            ))
+        return self.query_cls(self._decoded_query)
 
     @property
     def fragment(self):
-        return self.components.fragment
+        return self._fragment
 
     @property
     def netloc(self):
@@ -75,6 +71,9 @@ class _RI(object):
             self.hostname,
             ':' + self.port if self.port else ''
         )
+
+    def __repr__(self):
+        return "%s(%r, encoding='idna')" % (self.__class__.__name__, str(self))
 
     def _unsplit(self):
         return urlparse.urlunsplit((
@@ -86,7 +85,8 @@ class _RI(object):
 
 class IRI(_RI):
 
-    def __init__(self, iri, query_class=None):
+    def __init__(self, iri, query_cls=None):
+
         # convert URI and str types to unicode
         if isinstance(iri, URI):
             iri = unicode(iri.to_iri())
@@ -99,7 +99,7 @@ class IRI(_RI):
             msg = "could not convert {0} to IRI: {1}"
             raise ValueError(msg.format(type(iri), iri))
 
-        super(IRI, self).__init__(iri, query_class=query_class)
+        super(IRI, self).__init__(iri, query_cls=query_cls)
 
     def __unicode__(self):
         return self._unsplit()
@@ -113,14 +113,14 @@ class IRI(_RI):
 
 class URI(_RI):
 
-    def __init__(self, uri, encoding='utf8', query_class=None):
+    def __init__(self, uri, encoding='utf-8', query_cls=None):
         if isinstance(uri, unicode):
             raise TypeError("uri must be a strings or IRI")
 
         if isinstance(uri, IRI):
             uri = str(uri.to_uri())
 
-        super(URI, self).__init__(uri, encoding, query_class=query_class)
+        super(URI, self).__init__(uri, encoding, query_cls=query_cls)
 
     def __str__(self):
         return self._unsplit()
