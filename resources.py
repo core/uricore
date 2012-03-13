@@ -20,11 +20,12 @@ class _RI(object):
         self.components = self.RIComponents(scheme, auth, hostname, port, path,
                                             querystr, query, fragment)
 
-    @property
-    def ri_components(self):
-        return (self.components.scheme, self.components.hostname,
-                self.components.path, self.components.querystr,
-                self.components.fragment)
+    def _unsplit(self):
+        return urlparse.urlunsplit((
+            self.scheme, self.hostname,
+            self.path, self.querystr,
+            self.fragment
+        ))
 
     @property
     def scheme(self):
@@ -80,36 +81,27 @@ class IRI(_RI):
         super(IRI, self).__init__(iri, charset, query_class=query_class)
 
     def __unicode__(self):
-        return urlparse.urlunsplit(self.ri_components)
+        return self._unsplit()
 
     def __str__(self):
         return str(self.to_uri())
 
     def to_uri(self):
-        return URI(wkz_urls.iri_to_uri(self.to_unicode()))
-
-    def to_unicode(self):
-        return unicode(self)
+        return URI(wkz_urls.iri_to_uri(self))
 
 
 class URI(_RI):
 
     def __init__(self, uri, query_class=None):
         if isinstance(uri, IRI):
-            uri = uri.to_uri().to_string()
+            uri = str(uri.to_uri())
         super(URI, self).__init__(uri, 'ascii', query_class=query_class)
 
     def __str__(self):
-        return urlparse.urlunsplit(self.ri_components)
+        return self._unsplit()
 
     def __unicode__(self):
         return unicode(self.to_iri())
 
     def to_iri(self):
         return IRI(wkz_urls.uri_to_iri(str(self)))
-
-    def to_string(self):
-        return str(self)
-
-    def to_unicode(self):
-        return unicode(self)
