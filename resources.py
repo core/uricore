@@ -1,8 +1,34 @@
 # encoding: utf-8
 import urlparse
+from collections import defaultdict
 
 import wkz_urls
 import wkz_datastructures
+
+def build_netloc(hostname, auth=None, port=None):
+    return "%s%s%s" % (
+        auth + '@' if auth else '',
+        hostname,
+        ':' + str(port) if port else ''
+    )
+
+def unsplit(**kwargs):
+    parts = defaultdict(str)
+    for k in kwargs:
+        if kwargs[k]:
+            parts[k] = kwargs[k]
+
+    if 'netloc' in parts:
+        netloc = parts['netloc']
+    else:
+        netloc = build_netloc(parts['hostname'], parts.get('auth'),
+                              parts.get('port'))
+
+    return urlparse.urlunsplit((
+        parts['scheme'], netloc,
+        parts['path'], parts['querystr'],
+        parts['fragment']
+    ))
 
 
 class _RI(object):
@@ -18,7 +44,9 @@ class _RI(object):
     def update(self, **kwargs):
         vals = {
             'scheme': self.scheme,
+            'auth': self.auth,
             'hostname': self.hostname,
+            'port': self.port,
             'path': self.path,
             'querystr': self.querystr,
             'fragment': self.fragment
@@ -26,11 +54,7 @@ class _RI(object):
         if len(kwargs):
             vals.update(kwargs)
 
-        new_ri = urlparse.urlunsplit((
-            vals['scheme'], vals['hostname'],
-            vals['path'], vals['querystr'],
-            vals['fragment']
-        ))
+        new_ri = unsplit(**vals)
         return type(self)(new_ri, encoding=self.encoding, query_cls=self.query_cls)
 
     @property
@@ -84,18 +108,13 @@ class _RI(object):
 
     @property
     def netloc(self):
-        return "%s%s%s" % (
-            self.auth + '@' if self.auth else '',
-            self.hostname,
-            ':' + self.port if self.port else ''
-        )
+        return build_netloc(self.hostname, self.auth, self.port)
 
-    def _unsplit(self):
-        return urlparse.urlunsplit((
-            self.scheme, self.netloc,
-            self.path, self.querystr,
-            self.fragment
-        ))
+    @property
+    def ri(self):
+        return unsplit(netloc=self.netloc, scheme=self.scheme,
+                       path=self.path, querystr=self.querystr,
+                       fragment=self.fragment)
 
 
 class IRI(_RI):
@@ -123,7 +142,7 @@ class IRI(_RI):
         return repr(unicode(self))
 
     def __unicode__(self):
-        return self._unsplit()
+        return self.ri
 
     def to_uri(self):
         return URI(wkz_urls.iri_to_uri(self))
@@ -145,7 +164,7 @@ class URI(_RI):
         return "URI(%s, encoding='idna')" % repr(str(self))
 
     def __str__(self):
-        return self._unsplit()
+        return self.ri
 
     def __unicode__(self):
         return unicode(str(self))

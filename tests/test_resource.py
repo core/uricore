@@ -14,9 +14,9 @@ class TestResources(unittest.TestCase):
     def test_iri_add_port(self):
         iri = IRI(u'http://\N{SNOWMAN}/')
         new_iri = iri.update(port=8000)
-        assert repr(new_iri) == "IRI('http://xn--n3h:8000/')"
-        assert iri.port == 8000
-        assert iri.port is None
+        self.assertEquals(iri.netloc + ':8000', new_iri.netloc)
+        self.assertEquals(new_iri.port, '8000')
+        self.assertEquals(iri.port, None)
 
     def test_iri_update_query(self):
         iri = IRI(u'http://\N{SNOWMAN}/')
