@@ -7,6 +7,18 @@ from resources import IRI, URI
 from wkz_datastructures import MultiDict
 
 
+class TestIRIInputs(unittest.TestCase):
+
+    def test_str_input_fails(self):
+        self.assertRaises(TypeError, IRI, 'http://example.com'.encode('ascii'))
+
+    def test_uri_input(self):
+        iri = TestIRISnowman.ri
+        uri = URI(iri)
+        self.assertEquals(str(iri), str(IRI(uri)))
+        self.assertEquals(unicode(iri), unicode(IRI(uri)))
+
+
 class TestIRISnowman(cases.RICase):
 
     ri = IRI("http://u:p@www.\N{SNOWMAN}:80/path?q=arg#frag")
@@ -24,13 +36,6 @@ class TestIRISnowman(cases.RICase):
     )
 
 
-class TestIRIInputs(unittest.TestCase):
+class TestIRIJoin(cases.JoinCase):
 
-    def test_str_input_fails(self):
-        self.assertRaises(TypeError, IRI, 'http://example.com'.encode('ascii'))
-
-    def test_uri_input(self):
-        iri = TestIRISnowman.ri
-        uri = URI(iri)
-        self.assertEquals(str(iri), str(IRI(uri)))
-        self.assertEquals(unicode(iri), unicode(IRI(uri)))
+    RI = IRI

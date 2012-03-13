@@ -1,4 +1,8 @@
+# encoding: utf-8
+from __future__ import unicode_literals
 import unittest
+
+from wkz_datastructures import MultiDict
 
 
 class RICase(unittest.TestCase):
@@ -32,3 +36,42 @@ class RICase(unittest.TestCase):
 
     def test_repr(self):
         self.assertEquals(repr(self.ri), self.expect['repr'])
+
+
+class JoinCase(unittest.TestCase):
+
+    def test_join_path_to_netloc(self):
+        ri = self.RI('http://localhost:8000').join(self.RI('/path/to/file'))
+        self.assertEquals(ri.scheme, 'http')
+        self.assertEquals(ri.netloc, 'localhost:8000')
+        self.assertEquals(ri.path, '/path/to/file')
+
+    def test_join_path_to_path(self):
+        ri = self.RI('http://localhost:8000/here/is/the').join(self.RI('/path/to/file'))
+        self.assertEquals(ri.scheme, 'http')
+        self.assertEquals(ri.netloc, 'localhost:8000')
+        self.assertEquals(ri.path, '/here/is/the/path/to/file')
+
+    def test_join_fragment_and_path(self):
+        ri = self.RI('http://localhost:8000/here/is/the').join(self.RI('/thing#fragment'))
+        self.assertEquals(ri.path, '/here/is/the/thing')
+        self.assertEquals(ri.fragment, 'fragment')
+
+    def test_join_query_to_path(self):
+        ri = self.RI('http://localhost:8000/path/to/file').join(self.RI('?yes=no&left=right'))
+        self.assertEquals(ri.path, '/path/to/file')
+        self.assertEquals(ri.query, MultiDict(dict(yes='no', left='right')))
+        self.assertEquals(ri.querystr, 'yes=no&left=right')
+
+    def test_join_query_to_query(self):
+        ri = self.RI('http://localhost:8000/path/to/file?yes=no').join(self.RI('?left=right'))
+        self.assertEquals(ri.path, '/path/to/file')
+        self.assertEquals(self.riquery, MultiDict(dict(yes='no', left='right')))
+        self.assertEquals(ri.querystr, 'yes=no&left=right')
+
+    def test_join_fragment_to_query(self):
+        ri = self.RI('http://rubberchick.en/path/to/file?yes=no').join(self.RI('#giblets'))
+        self.assertEquals(ri.path, '/path/to/file')
+        self.assertEquals(ri.query, MultiDict(dict(yes='no', left='right')))
+        self.assertEquals(ri.querystr, 'yes=no')
+        self.assertEquals(ri.fragment, 'giblets')
