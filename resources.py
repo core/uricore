@@ -68,9 +68,15 @@ class _RI(object):
     def query(self):
         """Return a new instance of query_cls."""
 
+        encoding = self.encoding
+        querystr = self.querystr
+        if isinstance(querystr, unicode):
+            encoding = 'utf-8'
+            querystr = querystr.encode(encoding)
+
         if not hasattr(self, '_decoded_query'):
             self._decoded_query = list(wkz_urls._url_decode_impl(
-                str(self.querystr).split('&'), self.encoding,
+                querystr.split('&'), encoding,
                 False, True, 'replace'
             ))
         return self.query_cls(self._decoded_query)
@@ -129,6 +135,7 @@ class IRI(_RI):
 class URI(_RI):
 
     def __init__(self, uri, encoding='utf-8', query_cls=None):
+
         if isinstance(uri, unicode):
             raise TypeError("uri must be a string or IRI")
 
