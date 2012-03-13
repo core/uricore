@@ -208,7 +208,7 @@ class URI(object):
             raise TypeError(type(self))
 
         iri = self._iri.join(IRI(other))
-        return iri.to_uri()
+        return URI(iri)
 
     def to_iri(self):
         return IRI(wkz_urls.uri_to_iri(self))
