@@ -170,4 +170,4 @@ class URI(_RI):
         return unicode(str(self))
 
     def to_iri(self):
-        return IRI(wkz_urls.uri_to_iri(str(self)))
+        return IRI(wkz_urls.uri_to_iri(self))
