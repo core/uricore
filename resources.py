@@ -10,21 +10,15 @@ import wkz_urls
 class _RI(object):
     RIComponents = namedtuple('RIComponents', ('scheme', 'auth', 'hostname',
                                                'port', 'path', 'querystr',
-                                               'query', 'fragment', 'netloc'))
+                                               'query', 'fragment'))
 
     def __init__(self, ri, encoding=None, query_class=None):
         scheme, auth, hostname, port, path, querystr, fragment = (
             wkz_urls._uri_split(ri))
 
-        netloc = "%s%s%s" % (
-            auth + '@' if auth else '',
-            hostname,
-            ':' + port if port else ''
-        )
-
         query = wkz_urls.url_decode(querystr, encoding, cls=query_class)
         self.components = self.RIComponents(scheme, auth, hostname, port, path,
-                                            querystr, query, fragment, netloc)
+                                            querystr, query, fragment)
 
     @property
     def scheme(self):
@@ -60,7 +54,11 @@ class _RI(object):
 
     @property
     def netloc(self):
-        return self.components.netloc
+        return "%s%s%s" % (
+            self.auth + '@' if self.auth else '',
+            self.hostname,
+            ':' + self.port if self.port else ''
+        )
 
     def __repr__(self):
         return "%s(%r, encoding='idna')" % (self.__class__.__name__, str(self))
