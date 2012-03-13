@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 import unittest
 
+from nose.plugins.skip import SkipTest
+
 from wkz_datastructures import MultiDict
 
 
@@ -48,6 +50,9 @@ class JoinCase(unittest.TestCase):
     #
     # Class variables:
     # RI = IRI/URI constructor given a unicode object
+
+    def setUp(self):
+        raise SkipTest('join not implemented')
 
     def test_join_path_to_netloc(self):
         ri = self.RI('http://localhost:8000').join(self.RI('/path/to/file'))
