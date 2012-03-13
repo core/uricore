@@ -64,6 +64,7 @@ class _RI(object):
 
 
 class IRI(_RI):
+    default_encoding = 'utf8'
 
     def __init__(self, iri, encoding=None, query_class=None):
 
@@ -71,16 +72,16 @@ class IRI(_RI):
         if isinstance(iri, URI):
             iri = unicode(iri.to_iri())
         elif isinstance(iri, str):
-            if not encoding:
-                raise UnicodeDecodeError("No encoding specified")
-            iri = iri.decode(encoding=encoding)
+            iri = iri.decode(encoding=encoding or self.default_encoding)
+        elif isinstance(iri, unicode) and encoding is not None:
+            raise ValueError("encoding must be None if iri is unicode")
 
         # if we don't have a unicode at this point, we can't convert
         if not isinstance(iri, unicode):
             msg = "could not convert {0} to IRI: {1}"
             raise ValueError(msg.format(type(iri), iri))
 
-        super(IRI, self).__init__(iri, encoding, query_class=query_class)
+        super(IRI, self).__init__(iri, encoding or self.default_encoding, query_class=query_class)
 
     def __unicode__(self):
         return self._unsplit()
