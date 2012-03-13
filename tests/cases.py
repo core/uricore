@@ -91,11 +91,11 @@ class JoinCase(unittest.TestCase):
         ri = self.RI('https://secure.pants.net/')
         self.assertRaises(TypeError, ri.join, '/path/to/thing')
 
-    def test_join_no_scheme_with_scheme(self):
-        ri = self.RI('/nowhere')
-        result = ri.join(self.RI('gopher://'))
+    def test_join_scheme_with_path(self):
+        ri = self.RI('gopher://')
+        result = ri.join(self.RI('nowhere'))
         self.assertEquals(result.scheme, 'gopher')
-        self.assertEquals(result.path, '/')
+        self.assertEquals(result.path, '/nowhere')
 
     def test_join_no_hostname_with_hostname(self):
         ri = self.RI('gopher://')
