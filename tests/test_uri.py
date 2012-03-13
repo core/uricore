@@ -1,8 +1,7 @@
 # encoding: utf-8
 import unittest
 
-from resources import URI
-from resources import IRI
+from resources import IRI, URI
 
 
 class TestURISnowman(unittest.TestCase):
@@ -11,9 +10,6 @@ class TestURISnowman(unittest.TestCase):
         idna = u"\N{SNOWMAN}".encode('idna')
         uri = "http://u:p@www.%s:80/path" % idna
         self.uri = URI(uri)
-
-    def testFail(self):
-        self.assertRaises(TypeError, URI, u"http://\u2603/")
 
     def test_repr(self):
         expect = "URI('http://www.xn--n3h/path', encoding='idna')".encode('ascii')
@@ -34,3 +30,14 @@ class TestURISnowman(unittest.TestCase):
     def test_path(self):
         expect = "/path".encode('ascii')
         self.assertEquals(self.uri.path, expect)
+
+    def test_iri_input(self):
+        iri = IRI(self.uri)
+        self.assertEquals(str(self.uri), str(URI(iri)))
+        self.assertEquals(unicode(self.uri), unicode(URI(iri)))
+
+
+class TestURI(unittest.TestCase):
+
+    def test_unicode_input_fails(self):
+        self.assertRaises(TypeError, URI, u"http://www.example.com/")
