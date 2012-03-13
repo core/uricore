@@ -10,7 +10,7 @@ class TestURISnowman(unittest.TestCase):
               u"\N{SNOWMAN}".encode('idna'))
 
     def test_repr(self):
-        expect = "URI('http://u:p@www.xn--n3h/path', encoding='idna')".encode('ascii')
+        expect = "URI('http://u:p@www.xn--n3h:80/path', encoding='idna')".encode('ascii')
         self.assertEquals(repr(self.uri), expect)
 
     def test_netloc(self):

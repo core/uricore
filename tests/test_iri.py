@@ -11,7 +11,7 @@ class TestIRISnowman(unittest.TestCase):
     iri = IRI("http://u:p@www.\N{SNOWMAN}:80/path")
 
     def test_repr(self):
-        expect = "IRI(u'http://u:p@www.\\u2603:80/path')"
+        expect = "IRI('http://u:p@www.xn--n3h:80/path', encoding='idna')"
         expect = expect.encode('ascii')
         self.assertEquals(repr(self.iri), expect)
 

@@ -17,6 +17,12 @@ class _RI(object):
         (self._scheme, self._auth, self._hostname, self._port, self._path,
          self._querystr, self._fragment) = wkz_urls._uri_split(ri)
 
+    def __copy__(self):
+        return type(self)(ri, self.encoding, self.query_cls)
+
+    def __repr__(self):
+        return "%s(%r, encoding='idna')" % (self.__class__.__name__, str(self))
+
     def replace(self, attribute, value):
         attributes = ('auth', 'scheme', 'hostname', 'port', 'path', 'fragment')
         return type(self)(ri, self.encoding, self.query_cls)
@@ -88,15 +94,9 @@ class _RI(object):
             ':' + self.port if self.port else ''
         )
 
-    def __copy__(self):
-        return type(self)(ri, self.encoding, self.query_cls)
-
-    def __repr__(self):
-        return "%s(%r, encoding='idna')" % (self.__class__.__name__, str(self))
-
     def _unsplit(self):
         return urlparse.urlunsplit((
-            self.scheme, self.hostname,
+            self.scheme, self.netloc,
             self.path, self.querystr,
             self.fragment
         ))
