@@ -143,13 +143,6 @@ class IRI(object):
         if not isinstance(other, type(self)):
             raise TypeError(type(self))
 
-        # BUG: if only one of the two IRIs being joined have these set,
-        #      these shouldn't get raised
-        if not self.scheme or not self.hostname:
-            raise Exception # TODO: better errors
-        if other.scheme or other.hostname:
-            raise Exception
-
         vals = {
             'scheme': self.scheme,
             'auth': self.auth,
@@ -160,21 +153,37 @@ class IRI(object):
             'fragment': self.fragment,
         }
 
+        if other.scheme:
+            if self.scheme:
+                raise ValueError("cannot join scheme onto %ss with scheme" % self.__class__.name)
+            vals['scheme'] = other.scheme
+
+        if other.auth:
+            if self.auth:
+                raise ValueError("cannot join auth onto %ss with auth" % self.__class__.name)
+            vals['auth'] = other.auth
+
+        if other.hostname:
+            if self.hostname:
+                raise ValueError("cannot join hostname onto %ss with hostname" % self.__class__.name)
+            vals['hostname'] = other.hostname
+            vals['port'] = other.port
+
         if other.path:
             if self.querystr or self.fragment:
-                raise Exception
+                raise ValueError("cannot join path onto %ss with querystr or fragment" % self.__class__.name)
             vals['path'] = '/'.join([self.path, other.path]).replace('//', '/')
 
         if other.querystr:
             if self.fragment:
-                raise Exception
+                raise ValueError("cannot join querystr onto %ss with fragment" % self.__class__.name)
             query = self.query
             query.update(other.query)
             vals['querystr'] = '&'.join([('%s=%s' % (k, v)) for (k, v) in query.items()])  # TODO: do this properly
 
         if other.fragment:
             if self.fragment:
-                raise Exception
+                raise ValueError("cannot join fragment onto %ss with fragment" % self.__class__.name)
             vals['fragment'] = other.fragment
 
         return type(self)(unsplit(**vals), query_cls=self.query_cls)
