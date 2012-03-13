@@ -1,5 +1,10 @@
 from wkz_internal import _missing
 
+class BadRequestKeyError(Exception): pass
+
+def is_immutable(self):
+    raise TypeError('%r objects are immutable' % self.__class__.__name__)
+
 
 class TypeConversionDict(dict):
     """Works like a regular dict but the :meth:`get` method can perform
@@ -374,3 +379,99 @@ def iter_multi_items(mapping):
     else:
         for item in mapping:
             yield item
+
+
+class ImmutableDictMixin(object):
+    """Makes a :class:`dict` immutable.
+
+    .. versionadded:: 0.5
+
+    :private:
+    """
+    _hash_cache = None
+
+    @classmethod
+    def fromkeys(cls, keys, value=None):
+        instance = super(cls, cls).__new__(cls)
+        instance.__init__(zip(keys, repeat(value)))
+        return instance
+
+    def __reduce_ex__(self, protocol):
+        return type(self), (dict(self),)
+
+    def _iter_hashitems(self):
+        return self.iteritems()
+
+    def __hash__(self):
+        if self._hash_cache is not None:
+            return self._hash_cache
+        rv = self._hash_cache = hash(frozenset(self._iter_hashitems()))
+        return rv
+
+    def setdefault(self, key, default=None):
+        is_immutable(self)
+
+    def update(self, *args, **kwargs):
+        is_immutable(self)
+
+    def pop(self, key, default=None):
+        is_immutable(self)
+
+    def popitem(self):
+        is_immutable(self)
+
+    def __setitem__(self, key, value):
+        is_immutable(self)
+
+    def __delitem__(self, key):
+        is_immutable(self)
+
+    def clear(self):
+        is_immutable(self)
+
+
+class ImmutableMultiDictMixin(ImmutableDictMixin):
+    """Makes a :class:`MultiDict` immutable.
+
+    .. versionadded:: 0.5
+
+    :private:
+    """
+
+    def __reduce_ex__(self, protocol):
+        return type(self), (self.items(multi=True),)
+
+    def _iter_hashitems(self):
+        return self.iteritems(multi=True)
+
+    def add(self, key, value):
+        is_immutable(self)
+
+    def popitemlist(self):
+        is_immutable(self)
+
+    def poplist(self, key):
+        is_immutable(self)
+
+    def setlist(self, key, new_list):
+        is_immutable(self)
+
+    def setlistdefault(self, key, default_list=None):
+        is_immutable(self)
+
+
+class ImmutableMultiDict(ImmutableMultiDictMixin, MultiDict):
+    """An immutable :class:`MultiDict`.
+
+    .. versionadded:: 0.5
+    """
+
+    def copy(self):
+        """Return a shallow mutable copy of this object.  Keep in mind that
+        the standard library's :func:`copy` function is a no-op for this class
+        like for any other python immutable type (eg: :class:`tuple`).
+        """
+        return MultiDict(self)
+
+    def __copy__(self):
+        return self

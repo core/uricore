@@ -8,6 +8,9 @@ from wkz_datastructures import MultiDict
 
 class TestResources(unittest.TestCase):
 
+    def setUp(self):
+        self.uri = URI("http://example.com?foo=bar")
+
     def test_iri_add_port(self):
         iri = IRI(u'http://\N{SNOWMAN}/')
         new_iri = iri.replace(port=8000)
@@ -24,6 +27,10 @@ class TestResources(unittest.TestCase):
         iriq2 = iriq.update_query(foo=None)
         assert repr(iriq2) == "IRI('http://xn--n3h/')"
         assert repr(iriq.query) == "MultiDict([('foo', '42')])"
+
+    def test_query_is_immutable(self):
+        self.assertRaises(TypeError, self.uri.query.add, "foo", "baz")
+        self.assertEquals(set(['bar']), set(self.uri.query.getlist('foo')))
 
     def test_hashability(self):
         iri = IRI(u'http://\N{SNOWMAN}/')

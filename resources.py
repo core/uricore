@@ -5,6 +5,7 @@ import urlparse
 from collections import namedtuple
 
 import wkz_urls
+import wkz_datastructures
 
 
 class _RI(object):
@@ -13,6 +14,9 @@ class _RI(object):
                                                'query', 'fragment'))
 
     def __init__(self, ri, encoding=None, query_class=None):
+        self.encoding = encoding
+        self.query_class = query_class
+
         scheme, auth, hostname, port, path, querystr, fragment = (
             wkz_urls._uri_split(ri))
 
@@ -22,6 +26,15 @@ class _RI(object):
 
     def __repr__(self):
         return "%s(%r, encoding='idna')" % (self.__class__.__name__, str(self))
+
+    def replace(self, attribute, value):
+        attributes = ('auth', 'scheme', 'hostname', 'port', 'path', 'fragment')
+        return type(self)(ri, self.encoding, self.query_class)
+
+    @property
+    def update_query(self):
+        # TODO: return immutable MultiDict
+        pass
 
     @property
     def scheme(self):
@@ -49,7 +62,7 @@ class _RI(object):
 
     @property
     def query(self):
-        return self.components.query
+        return wkz_datastructures.ImmutableMultiDict(self.components.query)
 
     @property
     def fragment(self):
