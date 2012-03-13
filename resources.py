@@ -103,10 +103,18 @@ class IRI(_RI):
 
 class URI(_RI):
 
-    def __init__(self, uri, query_class=None):
+    def __init__(self, uri, encoding='utf8', query_class=None):
         if isinstance(uri, IRI):
             uri = str(uri.to_uri())
-        super(URI, self).__init__(uri, 'ascii', query_class=query_class)
+
+        elif isinstance(uri, unicode):
+            encoding = 'utf8'
+            uri = uri.encode(encoding)
+
+        if not isinstance(uri, str):
+            raise TypeError("uri must be a IRI or str")
+
+        super(URI, self).__init__(uri, encoding, query_class=query_class)
 
     def __str__(self):
         return self._unsplit()
