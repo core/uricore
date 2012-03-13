@@ -21,7 +21,7 @@ class TestURI(unittest.TestCase):
 class TestURISnowman(cases.RICase):
 
     ri = URI("http://u:p@www.%s:80/path?q=arg#frag" %
-             u"\N{SNOWMAN}".encode('idna'))
+             u"\N{SNOWMAN}".encode('idna'), encoding='ascii')
     expect = dict(
         scheme="http",
         auth="u:p",
@@ -32,7 +32,7 @@ class TestURISnowman(cases.RICase):
         querystr='q=arg',
         fragment="frag",
         netloc="u:p@www.xn--n3h:80",
-        repr="URI('http://u:p@www.xn--n3h:80/path?q=arg#frag', encoding='idna')"
+        repr="URI('http://u:p@www.xn--n3h:80/path?q=arg#frag', encoding='ascii')"
     )
 
 

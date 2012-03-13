@@ -36,15 +36,22 @@ def unsplit(**kwargs):
 class _RI(object):
 
     def __init__(self, ri, **kwargs):
-        self.encoding = kwargs.get('encoding')
-        #NOTE: might be better to subclass instead of pass a query_cls around
+        self.encoding = getattr(self, 'encoding', None)
+
+        # NOTE: might be better to subclass instead of pass a query_cls around
         self.query_cls = kwargs.get('query_cls', wkz_datastructures.MultiDict)
 
         (self._scheme, self._auth, self._hostname, self._port, self._path,
          self._querystr, self._fragment) = wkz_urls._uri_split(ri)
 
     def __hash__(self):
-        return hash(self.ri)
+        return hash(str(self))
+
+    @property
+    def _ri(self):
+        return unsplit(netloc=self.netloc, scheme=self.scheme,
+                       path=self.path, querystr=self.querystr,
+                       fragment=self.fragment)
 
     def update(self, **kwargs):
         vals = {
@@ -64,7 +71,7 @@ class _RI(object):
 
     @property
     def update_query(self):
-        pass
+        raise NotImplementedError
 
     @property
     def scheme(self):
@@ -115,12 +122,6 @@ class _RI(object):
     def netloc(self):
         return build_netloc(self.hostname, self.auth, self.port)
 
-    @property
-    def ri(self):
-        return unsplit(netloc=self.netloc, scheme=self.scheme,
-                       path=self.path, querystr=self.querystr,
-                       fragment=self.fragment)
-
 
 class IRI(_RI):
 
@@ -141,21 +142,24 @@ class IRI(_RI):
         super(IRI, self).__init__(iri, **kwargs)
 
     def __repr__(self):
-        return "IRI(%s)" % str(self)
+        return "IRI(%s)" % repr(unicode(self))
 
     def __str__(self):
-        return repr(unicode(self))
+        return self.encode()
 
     def __unicode__(self):
-        return self.ri
+        return self._ri
+
+    def encode(self, encoding='utf-8'):
+        return unicode(self).encode(encoding)
 
     def to_uri(self):
-        return URI(wkz_urls.iri_to_uri(self))
+        return URI(wkz_urls.iri_to_uri(self), encoding='idna')
 
 
 class URI(_RI):
 
-    def __init__(self, uri, encoding='utf-8', **kwargs):
+    def __init__(self, uri, encoding='ascii', **kwargs):
 
         if isinstance(uri, unicode):
             raise TypeError("uri must be a string or IRI")
@@ -163,16 +167,24 @@ class URI(_RI):
         if isinstance(uri, IRI):
             uri = str(uri.to_uri())
 
-        super(URI, self).__init__(uri, encoding=encoding, **kwargs)
+        self.encoding = encoding
+        super(URI, self).__init__(uri, **kwargs)
 
     def __repr__(self):
-        return "URI(%s, encoding='idna')" % repr(str(self))
+        return "URI(%r, encoding='%s')" % (str(self), self.encoding)
 
     def __str__(self):
-        return self.ri
+        return self._ri
 
     def __unicode__(self):
-        return unicode(str(self))
+        return self.decode()
+
+    def decode(self):
+        if self.encoding == 'idna':
+            (scheme, auth, hostname, port, path, querystr, fragment
+                ) = wkz_urls._uri_split(self._ri)
+            hostname = hostname.decode('')
+        return str(self).decode(self.encoding)
 
     def to_iri(self):
         return IRI(wkz_urls.uri_to_iri(self))
