@@ -17,9 +17,6 @@ class _RI(object):
         (self._scheme, self._auth, self._hostname, self._port, self._path,
          self._querystr, self._fragment) = wkz_urls._uri_split(ri)
 
-    def __copy__(self):
-        return type(self)(ri, self.encoding, self.query_cls)
-
     def update(self, **kwargs):
         vals = {
             'scheme': self.scheme,
