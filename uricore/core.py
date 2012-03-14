@@ -141,8 +141,11 @@ class IRI(object):
         raise NotImplementedError
 
     def join(self, other):
-        if not isinstance(other, type(self)):
-            raise TypeError(type(self))
+        if isinstance(other, unicode):
+            other = IRI(other)
+        elif not isinstance(other, type(self)):
+            raise TypeError('Expected unicode or {0}. Got {1}'.format(
+                type(self).__name__, type(other).__name__))
 
         vals = {
             'scheme': self.scheme,
@@ -219,9 +222,12 @@ class URI(object):
     def __unicode__(self):
         return unicode(self._iri)
 
-    def join(self, other):
-        if not isinstance(other, type(self)):
-            raise TypeError(type(self))
+    def join(self, other, encoding='utf-8'):
+        if isinstance(other, str):
+            other = URI(other, encoding)
+        elif not isinstance(other, type(self)):
+            raise TypeError('Expected string or {0}. Got {1}'.format(
+                type(self).__name__, type(other).__name__))
 
         iri = self._iri.join(IRI(other))
         return URI(iri)

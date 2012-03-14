@@ -40,3 +40,9 @@ class TestIRISnowman(cases.RICase):
 class TestIRIJoin(cases.JoinCase):
 
     RI = IRI
+
+    def test_cannot_join_uri(self):
+        self.assertRaises(TypeError,
+                          IRI('http://localhost:8000').join,
+                          URI(str('/path/to/file'))
+                         )

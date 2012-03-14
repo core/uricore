@@ -39,4 +39,13 @@ class TestURISnowman(cases.RICase):
 
 class TestURIJoin(cases.JoinCase):
 
-    RI = lambda self, s: URI(s.encode('utf-8'), encoding='utf-8')
+    RI = lambda self, s: URI(self._literal_wrapper(s), encoding='utf-8')
+
+    def _literal_wrapper(self, lit):
+        return lit.encode('utf-8')
+
+    def test_cannot_join_uri(self):
+        self.assertRaises(TypeError,
+                          self.RI('http://localhost:8000').join,
+                          IRI(u'/path/to/file')
+                         )

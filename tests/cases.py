@@ -49,6 +49,9 @@ class JoinCase(unittest.TestCase):
     # Class variables:
     # RI = IRI/URI constructor given a unicode object
 
+    def _literal_wrapper(self, lit):
+        return lit
+
     def test_join_path_to_netloc(self):
         ri = self.RI('http://localhost:8000').join(self.RI('/path/to/file'))
         self.assertEquals(ri.scheme, 'http')
@@ -91,10 +94,6 @@ class JoinCase(unittest.TestCase):
         self.assertEquals(ri.querystr, 'yes=no')
         self.assertEquals(ri.fragment, 'giblets')
 
-    def test_join_with_literal_fails(self):
-        ri = self.RI('https://secure.pants.net/')
-        self.assertRaises(TypeError, ri.join, '/path/to/thing')
-
     def test_join_scheme_with_path(self):
         ri = self.RI('gopher://')
         result = ri.join(self.RI('nowhere'))
@@ -107,3 +106,9 @@ class JoinCase(unittest.TestCase):
         self.assertEquals(result.scheme, 'gopher')
         self.assertEquals(result.hostname, 'whole.org')
         self.assertEquals(result.path, '/ville')
+
+    def test_join_string(self):
+        ri = self.RI('http://localhost:8000').join(self._literal_wrapper('/path/to/file'))
+        self.assertEquals(ri.scheme, 'http')
+        self.assertEquals(ri.netloc, 'localhost:8000')
+        self.assertEquals(ri.path, '/path/to/file')
