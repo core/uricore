@@ -4,8 +4,9 @@ from __future__ import unicode_literals
 import urlparse
 from collections import defaultdict
 
-from . import wkz_urls  # temporary module name
-from . import wkz_datastructures  # temporary module name
+# TODO: import these from httpcore someday
+from . import wkz_urls as urls
+from . import wkz_datastructures as datastructures
 
 
 def build_netloc(hostname, auth=None, port=None):
@@ -54,10 +55,10 @@ class IRI(object):
          self._port,
          self._path,
          self._querystr,
-         self._fragment) = wkz_urls._uri_split(iri)
+         self._fragment) = urls._uri_split(iri)
 
         # NOTE: might be better to subclass instead of pass a query_cls around
-        self.query_cls = query_cls or wkz_datastructures.MultiDict
+        self.query_cls = query_cls or datastructures.MultiDict
 
     def __repr__(self):
         return "IRI({0!r})".format(unicode(self)).encode('ascii')
@@ -77,7 +78,7 @@ class IRI(object):
         return unicode(self).encode(encoding)
 
     def to_uri(self):
-        return URI(wkz_urls.iri_to_uri(self), encoding='idna')
+        return URI(urls.iri_to_uri(self), encoding='idna')
 
     @property
     def scheme(self):
@@ -108,7 +109,7 @@ class IRI(object):
         """Return a new instance of query_cls."""
 
         if not hasattr(self, '_decoded_query'):
-            self._decoded_query = list(wkz_urls._url_decode_impl(
+            self._decoded_query = list(urls._url_decode_impl(
                 self.querystr.encode('utf-8').split('&'.encode('utf-8')),
                 'utf-8', False, True, 'strict'))
         return self.query_cls(self._decoded_query)
@@ -222,4 +223,4 @@ class URI(object):
         return URI(iri)
 
     def to_iri(self):
-        return IRI(wkz_urls.uri_to_iri(self))
+        return IRI(urls.uri_to_iri(self))
