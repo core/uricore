@@ -78,6 +78,12 @@ class JoinCase(unittest.TestCase):
         self.assertEquals(ri.query, MultiDict(dict(yes='no', left='right')))
         self.assertEquals(ri.querystr, 'yes=no&left=right')
 
+    def test_join_query_to_query_to_make_multi_query(self):
+        ri = self.RI('http://localhost:8000/path/to/file?yes=no').join(self.RI('?yes=maybe&left=right'))
+        self.assertEquals(ri.path, '/path/to/file')
+        self.assertEquals(ri.query, MultiDict([('yes','no'), ('yes','maybe'), ('left','right'),]))
+        self.assertEquals(ri.querystr, 'yes=no&yes=maybe&left=right')
+
     def test_join_fragment_to_query(self):
         ri = self.RI('http://rubberchick.en/path/to/file?yes=no').join(self.RI('#giblets'))
         self.assertEquals(ri.path, '/path/to/file')

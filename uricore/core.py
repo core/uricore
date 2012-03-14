@@ -180,7 +180,11 @@ class IRI(object):
                 raise ValueError("cannot join querystr onto %ss with fragment" % self.__class__.name)
             query = self.query
             query.update(other.query)
-            vals['querystr'] = '&'.join([('%s=%s' % (k, v)) for (k, v) in query.items()])  # TODO: do this properly
+            vals['querystr'] = '&'.join([
+                '&'.join([
+                    '%s=%s' % (k,v) for v in query.getlist(k)
+                ]) for k in query.keys()
+            ])
 
         if other.fragment:
             if self.fragment:
