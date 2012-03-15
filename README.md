@@ -1,5 +1,7 @@
 # urilib
 
+[![Build Status](https://secure.travis-ci.org/core/uricore.png?branch=master)](http://travis-ci.org/core/uricore)
+
 **WARNING: Rough, raw, and fast changing code. Check back later. ;-)**
 
 --
