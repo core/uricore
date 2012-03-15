@@ -84,6 +84,17 @@ class IRI(object):
     def to_uri(self):
         return URI(urls.iri_to_uri(self), encoding='idna')
 
+    def to_dict(self):
+        return {
+            'scheme': self.scheme,
+            'auth': self.auth,
+            'hostname': self.hostname,
+            'port': self.port,
+            'path': self.path,
+            'querystr': self.querystr,
+            'fragment': self.fragment
+        }
+
     @property
     def scheme(self):
         return self._scheme
@@ -125,17 +136,6 @@ class IRI(object):
     @property
     def netloc(self):
         return build_netloc(self.hostname, self.auth, self.port)
-
-    def to_dict(self):
-        return {
-            'scheme': self.scheme,
-            'auth': self.auth,
-            'hostname': self.hostname,
-            'port': self.port,
-            'path': self.path,
-            'querystr': self.querystr,
-            'fragment': self.fragment
-        }
 
     def update(self, **kwargs):
         vals = self.to_dict()
