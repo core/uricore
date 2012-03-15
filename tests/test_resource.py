@@ -42,6 +42,13 @@ class TestURICore(unittest.TestCase):
         self.assertNotEquals(hash(iri), hash(uri))
         self.assertEquals(hash(iri), hash(iri2))
 
+    def test_equality(self):
+        iri = IRI(u'http://\N{SNOWMAN}/')
+        iri2 = IRI(u'http://\N{SNOWMAN}/')
+        iri3 = IRI(u'http://\N{SNOWMAN}/?x=2')
+        self.assertEquals(iri, iri2)
+        self.assertNotEquals(iri, iri3)
+
     def test_configurable_multi_dict_class(self):
         class CustomMultiDict(MultiDict):
             pass

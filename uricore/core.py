@@ -75,6 +75,22 @@ class IRI(object):
                        path=self.path, querystr=self.querystr,
                        fragment=self.fragment)
 
+    def __eq__(self, other):
+        if (self.fragment == other.fragment and
+            self.querystr == other.querystr and
+            self.path == other.path and
+            self.port == other.port and
+            self.hostname == other.hostname and
+            self.auth == other.auth and
+            self.scheme == other.scheme):
+            return True
+
+        return False
+
+
+    def __neq__(self, other):
+        return not self.__eq__(other)
+
     def __hash__(self):
         return hash(str(self))
 
