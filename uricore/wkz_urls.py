@@ -8,7 +8,10 @@
     :copyright: (c) 2011 by the Werkzeug Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    import urllib.parse as urlparse
 
 from wkz_internal import _decode_unicode
 from wkz_datastructures import MultiDict, iter_multi_items

@@ -1,7 +1,11 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    import urllib.parse as urlparse
+
 from collections import defaultdict
 
 # TODO: import these from httpcore someday
