@@ -122,8 +122,8 @@ class IRI(object):
     def netloc(self):
         return build_netloc(self.hostname, self.auth, self.port)
 
-    def update(self, **kwargs):
-        vals = {
+    def to_dict(self):
+        return {
             'scheme': self.scheme,
             'auth': self.auth,
             'hostname': self.hostname,
@@ -132,13 +132,22 @@ class IRI(object):
             'querystr': self.querystr,
             'fragment': self.fragment
         }
+
+    def update(self, **kwargs):
+        vals = self.to_dict()
         if len(kwargs):
             vals.update(kwargs)
 
         return type(self)(unsplit(**vals), query_cls=self.query_cls)
 
-    def update_query(self):
-        raise NotImplementedError
+    def update_query(self, qry):
+        assert isinstance(qry, self.query_cls)
+
+        vals = self.to_dict()
+        vals['querystr'] = urls.url_encode(qry)
+
+        return type(self)(unsplit(**vals), query_cls=self.query_cls)
+
 
     def join(self, other):
         if isinstance(other, unicode):
@@ -147,15 +156,7 @@ class IRI(object):
             raise TypeError('Expected unicode or {0}. Got {1}'.format(
                 type(self).__name__, type(other).__name__))
 
-        vals = {
-            'scheme': self.scheme,
-            'auth': self.auth,
-            'hostname': self.hostname,
-            'port': self.port,
-            'path': self.path,
-            'querystr': self.querystr,
-            'fragment': self.fragment,
-        }
+        vals = self.to_dict()
 
         if other.scheme:
             if self.scheme:
@@ -183,11 +184,7 @@ class IRI(object):
                 raise ValueError("cannot join querystr onto %ss with fragment" % self.__class__.name)
             query = self.query
             query.update(other.query)
-            vals['querystr'] = '&'.join([
-                '&'.join([
-                    '%s=%s' % (k,v) for v in query.getlist(k)
-                ]) for k in query.keys()
-            ])
+            vals['querystr'] = urls.url_encode(query)
 
         if other.fragment:
             if self.fragment:

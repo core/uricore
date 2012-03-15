@@ -20,15 +20,15 @@ class TestURICore(unittest.TestCase):
         self.assertEquals(iri.port, None)
 
     def test_iri_update_query(self):
-        raise SkipTest('not implemented')
         iri = IRI(u'http://\N{SNOWMAN}/')
-        iriq = iri.update_query({'foo': u'42'})
-        self.assertEquals(repr(iri.query), "MultiDict()")
-        self.assertEquals(repr(iriq), "IRI('http://xn--n3h/?foo=42')")
-        self.assertEquals(repr(iriq.query), "MultiDict([('foo', '42')])")
-        iriq2 = iriq.update_query(foo=None)
-        self.assertEquals(repr(iriq2), "IRI('http://xn--n3h/')")
-        self.assertEquals(repr(iriq.query), "MultiDict([('foo', '42')])")
+        q = iri.query
+        q.update({'foo': u'42'})
+        iri2 = iri.update_query(q)
+        self.assertNotEquals(iri, iri2)
+        self.assertTrue(isinstance(iri2, IRI))
+        self.assertEquals(repr(iri.query), "MultiDict([])")
+        self.assertEquals(repr(iri2), "IRI(u'http://\u2603/?foo=42')")
+        self.assertEquals(repr(iri2.query), "MultiDict([('foo', u'42')])")
 
     def test_query_is_immutable(self):
         self.uri.query.add("foo", "baz")
