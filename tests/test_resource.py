@@ -71,11 +71,6 @@ class TestInterface(unittest.TestCase):
         url2 = self.fixture.update(scheme="https")
         self.assertNotEquals(self.fixture, url2)
 
-    def test_idn_ascii_encoding(self):
-        ascii_url = "http://xn--bcher-kva.ch/".encode('ascii')
-        url = resources.Resource(u"http://Bücher.ch/")
-        self.assertEquals(url.to_ascii(), ascii_url)
-
     def test_idn_ascii_poo_encoding(self):
         ascii_url = "http://xn--ls8h.la/".encode('ascii')
         url = resources.Resource("http://💩.la/")
