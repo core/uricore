@@ -71,3 +71,7 @@ class TestURICore(unittest.TestCase):
         raise SkipTest("Not Implemented")
         lenient_iri = IRI.from_lenient(u'http://de.wikipedia.org/wiki/Elf (Begriffskl\xe4rung)')
         self.assertEquals(repr(lenient_iri), "URI('http://de.wikipedia.org/wiki/Elf%20%28Begriffskl%C3%A4rung%29')")
+
+    def test_normalizes_identifier(self):
+        uri = URI('http://example.com/#')
+        self.assertEquals(str(uri), 'http://example.com/')

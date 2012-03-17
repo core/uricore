@@ -59,8 +59,8 @@ class ResourceIdentifier(object):
         if not isinstance(identifier, basestring):
             raise TypeError("Expected str or unicode: %s", type(identifier))
 
-        self._identifier = identifier
         self._parts = identifier_to_dict(identifier)
+        self._identifier = unsplit(**self._parts)
 
         # NOTE: might be better to subclass instead of pass a query_cls around
         self.query_cls = query_cls or datastructures.MultiDict
