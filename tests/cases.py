@@ -47,6 +47,10 @@ class JoinCase(unittest.TestCase):
     # RI = IRI/URI constructor given a unicode object
 
     def _literal_wrapper(self, lit):
+        """
+        Type returned is determined by whether or not unicode_literals are used
+        in the calling module.
+        """
         return lit
 
     def test_join_path_to_netloc(self):
