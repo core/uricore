@@ -223,11 +223,10 @@ class URI(ResourceIdentifier):
             raise TypeError("uri must be str or IRI/URI: %s"
                             % type(uri).__name__)
 
-        self._encoding = encoding
         super(URI, self).__init__(identifier, query_cls)
 
     def __repr__(self):
-        return "URI({0!r}, encoding='ascii')".format(str(self))
+        return "URI({0!r})".format(str(self))
 
     def __str__(self):
         return self._identifier
