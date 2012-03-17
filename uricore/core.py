@@ -1,5 +1,5 @@
 # encoding: utf-8
-from __future__ import unicode_literals
+__all__ = ['IRI', 'URI']
 
 try:
     import urlparse
@@ -16,6 +16,8 @@ from . import wkz_datastructures as datastructures
 def build_netloc(hostname, auth=None, port=None):
     auth = "{0}@".format(auth) if auth else ""
     port = ":{0}".format(port) if port else ""
+    if isinstance(hostname, unicode):
+        return u"{0}{1}{2}".format(auth, hostname, port)
     return "{0}{1}{2}".format(auth, hostname, port)
 
 
@@ -38,101 +40,62 @@ def unsplit(**kwargs):
     ))
 
 
-class IRI(object):
+def identifier_to_dict(identifier):
+    fields = ('scheme', 'auth', 'hostname', 'port',
+              'path', 'querystr', 'fragment')
+    values = urls._uri_split(identifier)
+    d = dict(zip(fields, values))
 
-    def __init__(self, iri, query_cls=None):
+    # querystr is a str
+    if isinstance(d['querystr'], unicode):
+        d['querystr'] = d['querystr'].encode('utf-8')
 
-        if isinstance(iri, (URI, IRI)):  # TODO: don't make a new copy
-            iri = unicode(iri)
+    return d
 
-        if not isinstance(iri, unicode):
-            raise TypeError("iri must be a unicode or IRI/URI: %s" % type(iri))
 
-        # if we don't have a unicode at this point, we can't convert
-        if not isinstance(iri, unicode):
-            msg = "could not convert {0} to IRI: {1}"
-            raise ValueError(msg.format(type(iri), iri))
+class ResourceIdentifier(object):
 
-        (self._scheme,
-         self._auth,
-         self._hostname,
-         self._port,
-         self._path,
-         self._querystr,
-         self._fragment) = urls._uri_split(iri)
+    def __init__(self, identifier, query_cls=None):
+        if not isinstance(identifier, basestring):
+            raise TypeError("Expected str or unicode: %s", type(identifier))
+
+        self._identifier = identifier
+        self._parts = identifier_to_dict(identifier)
 
         # NOTE: might be better to subclass instead of pass a query_cls around
         self.query_cls = query_cls or datastructures.MultiDict
 
-    def __repr__(self):
-        return "IRI({0!r})".format(unicode(self)).encode('ascii')
-
-    def __str__(self):
-        return self.encode()
-
-    def __unicode__(self):
-        return unsplit(netloc=self.netloc, scheme=self.scheme,
-                       path=self.path, querystr=self.querystr,
-                       fragment=self.fragment)
-
     def __eq__(self, other):
-        if (self.fragment == other.fragment and
-            self.querystr == other.querystr and
-            self.path == other.path and
-            self.port == other.port and
-            self.hostname == other.hostname and
-            self.auth == other.auth and
-            self.scheme == other.scheme):
-            return True
-
-        return False
-
-    def __neq__(self, other):
-        return not self.__eq__(other)
+        if set(self._parts.keys()) != set(other._parts.keys()):
+            return False
+        return all(self._parts[k] == other._parts[k] for k in self._parts.iterkeys())
 
     def __hash__(self):
-        return hash(str(self))
-
-    def encode(self, encoding='utf-8'):
-        return unicode(self).encode(encoding)
-
-    def to_uri(self):
-        return URI(urls.iri_to_uri(self), encoding='idna')
-
-    def to_dict(self):
-        return {
-            'scheme': self.scheme,
-            'auth': self.auth,
-            'hostname': self.hostname,
-            'port': self.port,
-            'path': self.path,
-            'querystr': self.querystr,
-            'fragment': self.fragment
-        }
+        return hash(self._identifier)
 
     @property
     def scheme(self):
-        return self._scheme
+        return self._parts['scheme']
 
     @property
     def auth(self):
-        return self._auth
+        return self._parts['auth']
 
     @property
     def hostname(self):
-        return self._hostname
+        return self._parts['hostname']
 
     @property
     def port(self):
-        return self._port
+        return self._parts['port']
 
     @property
     def path(self):
-        return self._path
+        return self._parts['path']
 
     @property
     def querystr(self):
-        return self._querystr
+        return self._parts['querystr']
 
     @property
     def query(self):
@@ -140,20 +103,19 @@ class IRI(object):
 
         if not hasattr(self, '_decoded_query'):
             self._decoded_query = list(urls._url_decode_impl(
-                self.querystr.encode('utf-8').split('&'.encode('utf-8')),
-                'utf-8', False, True, 'strict'))
+                self.querystr.split('&'), 'utf-8', False, True, 'strict'))
         return self.query_cls(self._decoded_query)
 
     @property
     def fragment(self):
-        return self._fragment
+        return self._parts['fragment']
 
     @property
     def netloc(self):
         return build_netloc(self.hostname, self.auth, self.port)
 
     def update(self, **kwargs):
-        vals = self.to_dict()
+        vals = dict(self._parts)
         if len(kwargs):
             vals.update(kwargs)
 
@@ -162,7 +124,7 @@ class IRI(object):
     def update_query(self, qry):
         assert isinstance(qry, self.query_cls)
 
-        vals = self.to_dict()
+        vals = dict(self._parts)
         vals['querystr'] = urls.url_encode(qry)
 
         return type(self)(unsplit(**vals), query_cls=self.query_cls)
@@ -170,11 +132,14 @@ class IRI(object):
     def join(self, other):
         if isinstance(other, unicode):
             other = IRI(other)
-        elif not isinstance(other, type(self)):
-            raise TypeError('Expected unicode or {0}. Got {1}'.format(
+        elif isinstance(other, str):
+            other = URI(other)
+
+        if not isinstance(other, type(self)):
+            raise TypeError("Expected unicode or {0}: {1}".format(
                 type(self).__name__, type(other).__name__))
 
-        vals = self.to_dict()
+        vals = dict(self._parts)
 
         if other.scheme:
             if self.scheme:
@@ -222,40 +187,50 @@ class IRI(object):
         return type(self)(unsplit(**vals), query_cls=self.query_cls)
 
 
-class URI(object):
+class IRI(ResourceIdentifier):
 
-    def __init__(self, uri, encoding='utf-8'):
+    def __init__(self, iri, query_cls=None):
 
-        if isinstance(uri, str):
-            self._iri = IRI(uri.decode(encoding))
-        elif isinstance(uri, IRI):
-            self._iri = IRI(uri)
+        if isinstance(iri, unicode):
+            identifier = iri
+        elif isinstance(iri, (IRI, URI)):
+            identifier = unicode(iri)
         else:
-            raise TypeError("uri must be a string or IRI: %s", type(uri))
+            raise TypeError("iri must be unicode or IRI/URI: %s"
+                            % type(iri).__name__)
 
-        self.encoding = encoding
-
-    def __getattr__(self, name):
-        return getattr(self._iri, name)
+        super(IRI, self).__init__(identifier, query_cls)
 
     def __repr__(self):
-        return "URI(%r, encoding='%s')" % (str(self), self.encoding)
+        return "IRI({0!r})".format(unicode(self))
 
     def __str__(self):
-        return self._iri.encode(encoding=self.encoding)
+        return urls.iri_to_uri(self._identifier)
 
     def __unicode__(self):
-        return unicode(self._iri)
+        return self._identifier
 
-    def join(self, other, encoding='utf-8'):
-        if isinstance(other, str):
-            other = URI(other, encoding)
-        elif not isinstance(other, type(self)):
-            raise TypeError('Expected string or {0}. Got {1}'.format(
-                type(self).__name__, type(other).__name__))
 
-        iri = self._iri.join(IRI(other))
-        return URI(iri)
+class URI(ResourceIdentifier):
 
-    def to_iri(self):
-        return IRI(urls.uri_to_iri(self))
+    def __init__(self, uri, encoding='utf-8', query_cls=None):
+
+        if isinstance(uri, str):
+            identifier = urls.iri_to_uri(uri.decode(encoding))
+        elif isinstance(uri, (IRI, URI)):
+            identifier = str(uri)
+        else:
+            raise TypeError("uri must be str or IRI/URI: %s"
+                            % type(uri).__name__)
+
+        self._encoding = encoding
+        super(URI, self).__init__(identifier, query_cls)
+
+    def __repr__(self):
+        return "URI({0!r}, encoding='ascii')".format(str(self))
+
+    def __str__(self):
+        return self._identifier
+
+    def __unicode__(self):
+        return urls.uri_to_iri(self._identifier)

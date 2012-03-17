@@ -37,7 +37,7 @@ class TestURICore(unittest.TestCase):
     def test_hashability(self):
         iri = IRI(u'http://\N{SNOWMAN}/')
         iri2 = IRI(u'http://\N{SNOWMAN}/')
-        uri = iri.to_uri()
+        uri = URI(iri)
 
         self.assertNotEquals(hash(iri), hash(uri))
         self.assertEquals(hash(iri), hash(iri2))
