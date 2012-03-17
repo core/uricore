@@ -193,7 +193,7 @@ class IRI(ResourceIdentifier):
 
         if isinstance(iri, unicode):
             identifier = iri
-        elif isinstance(iri, (IRI, URI)):
+        elif isinstance(iri, ResourceIdentifier):
             identifier = unicode(iri)
         else:
             raise TypeError("iri must be unicode or IRI/URI: %s"
@@ -217,7 +217,7 @@ class URI(ResourceIdentifier):
 
         if isinstance(uri, str):
             identifier = urls.iri_to_uri(uri.decode(encoding))
-        elif isinstance(uri, (IRI, URI)):
+        elif isinstance(uri, ResourceIdentifier):
             identifier = str(uri)
         else:
             raise TypeError("uri must be str or IRI/URI: %s"
