@@ -19,6 +19,11 @@ class TestIRIInputs(unittest.TestCase):
         self.assertEquals(str(iri), str(IRI(uri)))
         self.assertEquals(unicode(iri), unicode(IRI(uri)))
 
+    def test_repr(self):
+        iri = TestIRISnowman.ri
+        eval_iri = eval(repr(iri))
+        self.assertEquals(iri, eval_iri)
+
 
 class TestIRISnowman(cases.RICase):
 
@@ -33,7 +38,6 @@ class TestIRISnowman(cases.RICase):
         querystr='q=arg',
         fragment="frag",
         netloc="u:p@www.\u2603:80",
-        repr="IRI(u'http://u:p@www.\\u2603:80/path?q=arg#frag')".encode('ascii')
     )
 
 

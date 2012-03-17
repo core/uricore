@@ -18,6 +18,11 @@ class TestURI(unittest.TestCase):
         self.assertEquals(str(uri), str(URI(iri)))
         self.assertEquals(unicode(uri), unicode(URI(iri)))
 
+    def test_repr(self):
+        uri = TestURISnowman.ri
+        eval_uri = eval(repr(uri))
+        self.assertEquals(uri, eval_uri)
+
 
 class TestURISnowman(cases.RICase):
 
@@ -33,7 +38,6 @@ class TestURISnowman(cases.RICase):
         querystr='q=arg',
         fragment="frag",
         netloc="u:p@www.xn--n3h:80",
-        repr="URI('http://u:p@www.xn--n3h:80/path?q=arg#frag', encoding='ascii')"
     )
 
 

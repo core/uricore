@@ -39,9 +39,6 @@ class RICase(unittest.TestCase):
     def test_netloc(self):
         self.assertEquals(self.ri.netloc, self.expect['netloc'])
 
-    def test_repr(self):
-        self.assertEquals(repr(self.ri), self.expect['repr'])
-
 
 class JoinCase(unittest.TestCase):
     # Test join
