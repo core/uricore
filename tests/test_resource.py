@@ -12,6 +12,33 @@ class TestURICore(unittest.TestCase):
     def setUp(self):
         self.uri = URI("http://example.com?foo=bar")
 
+    def test_hashability(self):
+        iri1 = IRI(u'http://\N{CLOUD}/')
+        iri2 = IRI(u'http://\N{CLOUD}/')
+        self.assertEquals(hash(iri1), hash(iri2))
+
+        uri1 = URI(iri1)
+        uri2 = URI('http://xn--l3h/')
+        self.assertEquals(hash(uri1), hash(uri2))
+
+        self.assertNotEquals(hash(iri1), hash(uri1))
+
+    def test_equality(self):
+        iri1 = IRI(u'http://\N{CLOUD}/')
+        iri2 = IRI(u'http://\N{CLOUD}/')
+        self.assertEquals(iri1, iri2)
+
+        uri1 = URI(iri1)
+        uri2 = URI('http://xn--l3h/')
+        self.assertEquals(uri1, uri2)
+
+        self.assertNotEquals(iri1, uri1)
+
+    def test_query_param_breaks_equality_(self):
+        iri = IRI(u'http://\N{CLOUD}/')
+        iri2 = IRI(u'http://\N{CLOUD}/?q=a')
+        self.assertNotEquals(iri, iri2)
+
     def test_iri_add_port(self):
         iri = IRI(u'http://\N{SNOWMAN}/')
         new_iri = iri.update(port=8000)
@@ -34,21 +61,6 @@ class TestURICore(unittest.TestCase):
         self.uri.query.add("foo", "baz")
         self.assertEquals(set(['bar']), set(self.uri.query.getlist('foo')))
 
-    def test_hashability(self):
-        iri = IRI(u'http://\N{SNOWMAN}/')
-        iri2 = IRI(u'http://\N{SNOWMAN}/')
-        uri = URI(iri)
-
-        self.assertNotEquals(hash(iri), hash(uri))
-        self.assertEquals(hash(iri), hash(iri2))
-
-    def test_equality(self):
-        iri = IRI(u'http://\N{SNOWMAN}/')
-        iri2 = IRI(u'http://\N{SNOWMAN}/')
-        iri3 = IRI(u'http://\N{SNOWMAN}/?x=2')
-        self.assertEquals(iri, iri2)
-        self.assertNotEquals(iri, iri3)
-
     def test_configurable_multi_dict_class(self):
         class CustomMultiDict(MultiDict):
             pass
@@ -56,28 +68,6 @@ class TestURICore(unittest.TestCase):
         self.assertTrue(isinstance(iri.query, CustomMultiDict))
 
     def test_from_lenient(self):
-        raise SkipTest("not implemented yet")
+        raise SkipTest("Not Implemented")
         lenient_iri = IRI.from_lenient(u'http://de.wikipedia.org/wiki/Elf (Begriffskl\xe4rung)')
         self.assertEquals(repr(lenient_iri), "URI('http://de.wikipedia.org/wiki/Elf%20%28Begriffskl%C3%A4rung%29')")
-
-
-class TestInterface(unittest.TestCase):
-
-    def setUp(self):
-        raise SkipTest('old tests')
-        self.fixture = resources.Resource("http://example.com")
-
-    def test_copy_on_update(self):
-        url2 = self.fixture.update(scheme="https")
-        self.assertNotEquals(self.fixture, url2)
-
-    def test_idn_ascii_poo_encoding(self):
-        ascii_url = "http://xn--ls8h.la/".encode('ascii')
-        url = resources.Resource("http://💩.la/")
-        self.assertEquals(url.to_ascii(), ascii_url)
-
-    def test_getattr(self):
-        self.assertEquals(self.fixture.scheme, 'http')
-
-    def test_setattr(self):
-        self.assertRaises(AttributeError, setattr, self.fixture.scheme, "")

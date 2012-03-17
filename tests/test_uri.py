@@ -1,6 +1,8 @@
 # encoding: utf-8
 import unittest
 
+from nose.plugins.skip import SkipTest
+
 from uricore import IRI, URI
 from uricore.wkz_datastructures import MultiDict
 
@@ -22,6 +24,15 @@ class TestURI(unittest.TestCase):
         uri = TestURISnowman.ri
         eval_uri = eval(repr(uri))
         self.assertEquals(uri, eval_uri)
+
+    def test_idn_ascii_encoding(self):
+        uri = URI(u"http://Bücher.ch/".encode('utf-8'))
+        self.assertEquals(str(uri), "http://xn--bcher-kva.ch/")
+
+    def test_idn_ascii_encoding_poo(self):
+        raise SkipTest("Not Implemented")
+        uri = URI(u"http://💩.la/".encode('utf-8'))
+        self.assertEquals(str(uri), "http://xn--ls8h.la/")
 
 
 class TestURISnowman(cases.RICase):
