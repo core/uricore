@@ -29,16 +29,25 @@ class TestURI(unittest.TestCase):
         uri = URI(u"http://Bücher.ch/".encode('utf-8'))
         self.assertEquals(str(uri), "http://xn--bcher-kva.ch/")
 
-    def test_idn_ascii_encoding_poo(self):
+    def test_convert_pile_of_poo(self):
         raise SkipTest("Not Implemented")
-        uri = URI(u"http://💩.la/".encode('utf-8'))
-        self.assertEquals(str(uri), "http://xn--ls8h.la/")
+        iri = IRI(u"http://u:p@www.💩.la:80/path?q=arg#frag")
+        try:
+            URI(iri)
+        except Exception as e:
+            assert False, "{0} {1}".format(type(e), e)
+
+    def test_non_existent_scheme(self):
+        try:
+            URI("watwatwat://wat.wat/wat")
+        except Exception as e:
+            assert False, "{0} {1}".format(type(e), e)
 
 
-class TestURISnowman(cases.RICase):
+class TestURISnowman(cases.IdentifierCase):
 
-    ri = URI("http://u:p@www.%s:80/path?q=arg#frag" %
-             u"\N{SNOWMAN}".encode('idna'), encoding='ascii')
+    ri = URI("http://u:p@www.%s:80/path?q=arg#frag"
+             % u"\N{SNOWMAN}".encode('idna'))
     expect = dict(
         scheme="http",
         auth="u:p",
@@ -49,6 +58,39 @@ class TestURISnowman(cases.RICase):
         querystr='q=arg',
         fragment="frag",
         netloc="u:p@www.xn--n3h:80",
+    )
+
+
+class TestURIConvertedSnowman(cases.IdentifierCase):
+
+    iri = IRI(u"http://u:p@www.\N{SNOWMAN}:80/path?q=arg#frag")
+    ri = URI(iri)
+    expect = dict(
+        scheme="http",
+        auth="u:p",
+        hostname="www.xn--n3h",
+        port="80",
+        path="/path",
+        query=MultiDict([('q', 'arg')]),
+        querystr='q=arg',
+        fragment="frag",
+        netloc="u:p@www.xn--n3h:80",
+    )
+
+
+class TestURIPileOfPoo(cases.IdentifierCase):
+
+    ri = URI("http://u:p@www.xn--ls8h.la:80/path?q=arg#frag")
+    expect = dict(
+        scheme="http",
+        auth="u:p",
+        hostname="www.xn--ls8h.la",
+        port="80",
+        path="/path",
+        query=MultiDict([('q', 'arg')]),
+        querystr='q=arg',
+        fragment="frag",
+        netloc="u:p@www.xn--ls8h.la:80",
     )
 
 

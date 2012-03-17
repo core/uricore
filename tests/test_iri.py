@@ -10,7 +10,7 @@ from uricore.wkz_datastructures import MultiDict
 import cases
 
 
-class TestIRIInputs(unittest.TestCase):
+class TestIRI(unittest.TestCase):
 
     def test_str_input_fails(self):
         self.assertRaises(TypeError, IRI, 'http://example.com'.encode('ascii'))
@@ -27,16 +27,25 @@ class TestIRIInputs(unittest.TestCase):
         self.assertEquals(iri, eval_iri)
 
     def test_idn_ascii_encoding(self):
-        iri = IRI(u"http://Bücher.ch/")
+        iri = IRI("http://Bücher.ch/")
         self.assertEquals(str(iri), "http://xn--bcher-kva.ch/")
 
-    def test_idn_ascii_encoding_poo(self):
+    def test_convert_pile_of_poo(self):
         raise SkipTest("Not Implemented")
-        iri = IRI(u"http://💩.la/")
-        self.assertEquals(str(iri), "http://xn--ls8h.la/")
+        uri = URI("http://u:p@www.xn--ls8h.la:80/path?q=arg#frag".encode('utf-8'))
+        try:
+            IRI(uri)
+        except Exception as e:
+            assert False, "{0} {1}".format(type(e), e)
+
+    def test_non_existent_scheme(self):
+        try:
+            IRI("watwatwat://wat.wat/wat")
+        except Exception as e:
+            assert False, "{0} {1}".format(type(e), e)
 
 
-class TestIRISnowman(cases.RICase):
+class TestIRISnowman(cases.IdentifierCase):
 
     ri = IRI("http://u:p@www.\N{SNOWMAN}:80/path?q=arg#frag")
     expect = dict(
@@ -49,6 +58,40 @@ class TestIRISnowman(cases.RICase):
         querystr='q=arg',
         fragment="frag",
         netloc="u:p@www.\u2603:80",
+    )
+
+
+class TestIRIConvertedSnowman(cases.IdentifierCase):
+
+    uri = URI(("http://u:p@www.%s:80/path?q=arg#frag"
+               % u"\N{SNOWMAN}".encode('idna')).encode('utf-8'))
+    ri = IRI(uri)
+    expect = dict(
+        scheme="http",
+        auth="u:p",
+        hostname="www.\u2603",
+        port="80",
+        path="/path",
+        query=MultiDict([('q', 'arg')]),
+        querystr='q=arg',
+        fragment="frag",
+        netloc="u:p@www.\u2603:80",
+    )
+
+
+class TestIRIPileOfPoo(cases.IdentifierCase):
+
+    ri = IRI("http://u:p@www.💩.la:80/path?q=arg#frag")
+    expect = dict(
+        scheme="http",
+        auth="u:p",
+        hostname="www.💩.la",
+        port="80",
+        path="/path",
+        query=MultiDict([('q', 'arg')]),
+        querystr='q=arg',
+        fragment="frag",
+        netloc="u:p@www.💩.la:80",
     )
 
 
