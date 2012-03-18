@@ -65,6 +65,9 @@ class ResourceIdentifier(object):
         # NOTE: might be better to subclass instead of pass a query_cls around
         self.query_cls = query_cls or datastructures.MultiDict
 
+    def __repr__(self):
+        return "{0}({1!r})".format(type(self).__name__, self._identifier)
+
     def __eq__(self, other):
         if set(self._parts.keys()) != set(other._parts.keys()):
             return False
@@ -206,9 +209,6 @@ class IRI(ResourceIdentifier):
 
         super(IRI, self).__init__(identifier, query_cls)
 
-    def __repr__(self):
-        return "IRI({0!r})".format(unicode(self))
-
     def __str__(self):
         return urls.iri_to_uri(self._identifier)
 
@@ -235,9 +235,6 @@ class URI(ResourceIdentifier):
         super(URI, self).__init__(identifier, query_cls)
         self.encoding = encoding
 
-    def __repr__(self):
-        return "URI({0!r})".format(str(self))
-
     def __str__(self):
         return self._identifier
 
@@ -247,4 +244,3 @@ class URI(ResourceIdentifier):
     @classmethod
     def from_lenient(cls, maybe_gibberish):
         return cls(urls.url_fix(maybe_gibberish))
-
