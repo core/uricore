@@ -128,7 +128,9 @@ class ResourceIdentifier(object):
         assert isinstance(qry, self.query_cls)
 
         vals = dict(self._parts)
-        vals['querystr'] = urls.url_encode(qry)
+        q = self.query
+        q.update(qry)
+        vals['querystr'] = urls.url_encode(q)
 
         return type(self)(unsplit(**vals), query_cls=self.query_cls)
 
