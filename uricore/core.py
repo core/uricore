@@ -130,7 +130,7 @@ class ResourceIdentifier(object):
         vals = dict(self._parts)
         q = self.query
         q.update(qry)
-        vals['querystr'] = urls.url_encode(q)
+        vals['querystr'] = urls.url_encode(q, encode_keys=True, charset=getattr(self, 'encoding', 'utf-8'))
 
         return type(self)(unsplit(**vals), query_cls=self.query_cls)
 
@@ -180,7 +180,7 @@ class ResourceIdentifier(object):
                     self.__class__.name)
             query = self.query
             query.update(other.query)
-            vals['querystr'] = urls.url_encode(query)
+            vals['querystr'] = urls.url_encode(query, encode_keys=True, charset=getattr(self, 'encoding', 'utf-8'))
 
         if other.fragment:
             if self.fragment:
@@ -229,6 +229,7 @@ class URI(ResourceIdentifier):
                             % type(uri).__name__)
 
         super(URI, self).__init__(identifier, query_cls)
+        self.encoding = encoding
 
     def __repr__(self):
         return "URI({0!r})".format(str(self))

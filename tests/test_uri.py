@@ -94,7 +94,7 @@ class TestURIPileOfPoo(cases.IdentifierCase):
     )
 
 
-class TestURIJoin(cases.JoinCase):
+class TestURIJoin(cases.JoinAndUpdateCase):
 
     RI = lambda self, s: URI(self._literal_wrapper(s), encoding='utf-8')
 

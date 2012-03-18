@@ -95,7 +95,7 @@ class TestIRIPileOfPoo(cases.IdentifierCase):
     )
 
 
-class TestIRIJoin(cases.JoinCase):
+class TestIRIJoin(cases.JoinAndUpdateCase):
 
     RI = IRI
 

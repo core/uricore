@@ -40,8 +40,8 @@ class IdentifierCase(unittest.TestCase):
         self.assertEquals(self.ri.netloc, self.expect['netloc'])
 
 
-class JoinCase(unittest.TestCase):
-    # Test join
+class JoinAndUpdateCase(unittest.TestCase):
+    # Test join and update
     #
     # Class variables:
     # RI = IRI/URI constructor given a unicode object
@@ -85,13 +85,11 @@ class JoinCase(unittest.TestCase):
             MultiDict([('yes', 'no'), ('yes', 'maybe'), ('left', 'right')]))
         self.assertEquals(ri.querystr, 'yes=no&yes=maybe&left=right')
 
-    def test_join_query_object_to_query_to_make_multi_query(self):
-        ri = self.RI('http://localhost:8000/path/to/file?yes=no')
-        ri = ri.update_query(MultiDict(dict(yes='maybe', left='right')))
+    def test_join_nonascii_query_to_query(self):
+        ri = self.RI('http://localhost:8000/path/to/file?yes=no').join(self.RI('?h%C3%A4us=h%C3%B6f'))
         self.assertEquals(ri.path, '/path/to/file')
-        self.assertEquals(ri.query,
-            MultiDict([('yes', 'no'), ('yes', 'maybe'), ('left', 'right')]))
-        self.assertEquals(ri.querystr, 'yes=no&yes=maybe&left=right')
+        self.assertEquals(ri.query, MultiDict([('häus'.encode('utf8'), 'höf'), ('yes', 'no')]))
+        self.assertEquals(ri.querystr, 'h%C3%A4us=h%C3%B6f&yes=no')
 
     def test_join_fragment_to_query(self):
         ri = self.RI('http://rubberchick.en/path/to/file?yes=no').join(self.RI('#giblets'))
@@ -118,6 +116,21 @@ class JoinCase(unittest.TestCase):
         self.assertEquals(ri.scheme, 'http')
         self.assertEquals(ri.netloc, 'localhost:8000')
         self.assertEquals(ri.path, '/path/to/file')
+
+    def test_update_query_with_query_object_to_make_multi_query(self):
+        ri = self.RI('http://localhost:8000/path/to/file?yes=no')
+        ri = ri.update_query(MultiDict(dict(yes='maybe', left='right')))
+        self.assertEquals(ri.path, '/path/to/file')
+        self.assertEquals(ri.query,
+            MultiDict([('yes', 'no'), ('yes', 'maybe'), ('left', 'right')]))
+        self.assertEquals(ri.querystr, 'yes=no&yes=maybe&left=right')
+
+    def test_update_query_with_nonascii_query_object(self):
+        ri = self.RI('http://localhost:8000/path/to/file?yes=no')
+        ri = ri.update_query(MultiDict({'häus':'höf'}))
+        self.assertEquals(ri.path, '/path/to/file')
+        self.assertEquals(ri.query, MultiDict([('häus'.encode('utf8'), 'höf'), ('yes', 'no')]))
+        self.assertEquals(ri.querystr, 'yes=no&h%C3%A4us=h%C3%B6f')
 
 
 class NormalizeCase(unittest.TestCase):
