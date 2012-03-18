@@ -106,3 +106,11 @@ class TestURIJoin(cases.JoinCase):
                           self.RI('http://localhost:8000').join,
                           IRI(u'/path/to/file')
                          )
+
+
+class TestURINormalizes(cases.NormalizeCase):
+
+    RI = URI
+
+    def _literal_wrapper(self, lit):
+        return lit.encode('utf-8')

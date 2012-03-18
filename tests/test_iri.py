@@ -104,3 +104,8 @@ class TestIRIJoin(cases.JoinCase):
                           IRI('http://localhost:8000').join,
                           URI(str('/path/to/file'))
                          )
+
+
+class TestIRINormalizes(cases.NormalizeCase):
+
+    RI = IRI

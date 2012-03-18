@@ -110,3 +110,25 @@ class JoinCase(unittest.TestCase):
         self.assertEquals(ri.scheme, 'http')
         self.assertEquals(ri.netloc, 'localhost:8000')
         self.assertEquals(ri.path, '/path/to/file')
+
+
+class NormalizeCase(unittest.TestCase):
+    # Test normalization
+    #
+    # Class variables:
+    # RI = IRI/URI constructor given a unicode object
+
+    def _literal_wrapper(self, lit):
+        return lit
+
+    def test_normalizes_empty_fragment(self):
+        ri = self.RI(self._literal_wrapper('http://example.com/#'))
+        self.assertEquals(ri._identifier, 'http://example.com/')
+
+    def test_normalizes_empty_query(self):
+        ri = self.RI(self._literal_wrapper('http://example.com/?'))
+        self.assertEquals(ri._identifier, 'http://example.com/')
+
+    def test_normalizes_empty_query_and_fragment(self):
+        ri = self.RI(self._literal_wrapper('http://example.com/?#'))
+        self.assertEquals(ri._identifier, 'http://example.com/')
