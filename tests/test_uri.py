@@ -43,6 +43,10 @@ class TestURI(unittest.TestCase):
         except Exception as e:
             assert False, "{0} {1}".format(type(e), e)
 
+    def test_uri_from_lenient(self):
+        lenient_uri = URI.from_lenient(u'http://de.wikipedia.org/wiki/Elf (Begriffskl\xe4rung)'.encode('utf8'))
+        self.assertEquals(repr(lenient_uri), "URI('http://de.wikipedia.org/wiki/Elf%20%28Begriffskl%C3%A4rung%29')")
+
 
 class TestURISnowman(cases.IdentifierCase):
 

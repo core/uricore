@@ -215,6 +215,10 @@ class IRI(ResourceIdentifier):
     def __unicode__(self):
         return self._identifier
 
+    @classmethod
+    def from_lenient(cls, maybe_gibberish):
+        return cls(urls.url_fix(maybe_gibberish.encode('utf8')).decode('utf8'))
+
 
 class URI(ResourceIdentifier):
 
@@ -239,3 +243,8 @@ class URI(ResourceIdentifier):
 
     def __unicode__(self):
         return urls.uri_to_iri(self._identifier)
+
+    @classmethod
+    def from_lenient(cls, maybe_gibberish):
+        return cls(urls.url_fix(maybe_gibberish))
+

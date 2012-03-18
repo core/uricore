@@ -77,8 +77,3 @@ class TestURICore(unittest.TestCase):
             pass
         iri = IRI(u'http://\N{SNOWMAN}/', query_cls=CustomMultiDict)
         self.assertTrue(isinstance(iri.query, CustomMultiDict))
-
-    def test_from_lenient(self):
-        raise SkipTest("Not Implemented")
-        lenient_iri = IRI.from_lenient(u'http://de.wikipedia.org/wiki/Elf (Begriffskl\xe4rung)')
-        self.assertEquals(repr(lenient_iri), "URI('http://de.wikipedia.org/wiki/Elf%20%28Begriffskl%C3%A4rung%29')")
