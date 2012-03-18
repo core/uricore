@@ -23,7 +23,7 @@ class TestURICore(unittest.TestCase):
 
         self.assertNotEquals(hash(iri1), hash(uri1))
 
-    def test_equality(self):
+    def test_eq(self):
         iri1 = IRI(u'http://\N{CLOUD}/')
         iri2 = IRI(u'http://\N{CLOUD}/')
         self.assertEquals(iri1, iri2)
@@ -33,6 +33,17 @@ class TestURICore(unittest.TestCase):
         self.assertEquals(uri1, uri2)
 
         self.assertNotEquals(iri1, uri1)
+
+    def test_ne(self):
+        iri1 = IRI(u'http://\N{CLOUD}/')
+        iri2 = IRI(u'http://\N{CLOUD}/')
+        self.assertFalse(iri1 != iri2)
+
+        uri1 = URI(iri1)
+        uri2 = URI('http://xn--l3h/')
+        self.assertFalse(uri1 != uri2)
+
+        self.assertTrue(iri1 != uri1)
 
     def test_query_param_breaks_equality_(self):
         iri = IRI(u'http://\N{CLOUD}/')

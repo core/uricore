@@ -70,6 +70,9 @@ class ResourceIdentifier(object):
             return False
         return all(self._parts[k] == other._parts[k] for k in self._parts.iterkeys())
 
+    def __ne__(self, other):
+        return not self == other
+
     def __hash__(self):
         return hash(self._identifier)
 
