@@ -88,7 +88,7 @@ class JoinAndUpdateCase(unittest.TestCase):
     def test_join_nonascii_query_to_query(self):
         ri = self.RI('http://localhost:8000/path/to/file?yes=no').join(self.RI('?h%C3%A4us=h%C3%B6f'))
         self.assertEquals(ri.path, '/path/to/file')
-        self.assertEquals(ri.query, MultiDict([('häus'.encode('utf8'), 'höf'), ('yes', 'no')]))
+        self.assertEquals(ri.query, MultiDict([('häus'.encode('utf-8'), 'höf'), ('yes', 'no')]))
         self.assertEquals(ri.querystr, 'h%C3%A4us=h%C3%B6f&yes=no')
 
     def test_join_fragment_to_query(self):
@@ -129,7 +129,7 @@ class JoinAndUpdateCase(unittest.TestCase):
         ri = self.RI('http://localhost:8000/path/to/file?yes=no')
         ri = ri.update_query(MultiDict({'häus':'höf'}))
         self.assertEquals(ri.path, '/path/to/file')
-        self.assertEquals(ri.query, MultiDict([('häus'.encode('utf8'), 'höf'), ('yes', 'no')]))
+        self.assertEquals(ri.query, MultiDict([('häus'.encode('utf-8'), 'höf'), ('yes', 'no')]))
         self.assertEquals(ri.querystr, 'yes=no&h%C3%A4us=h%C3%B6f')
 
 

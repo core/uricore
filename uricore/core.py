@@ -217,7 +217,7 @@ class IRI(ResourceIdentifier):
 
     @classmethod
     def from_lenient(cls, maybe_gibberish):
-        return cls(urls.url_fix(maybe_gibberish.encode('utf8')).decode('utf8'))
+        return cls(urls.url_fix(maybe_gibberish.encode('utf-8')).decode('utf-8'))
 
 
 class URI(ResourceIdentifier):
