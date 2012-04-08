@@ -34,6 +34,15 @@ def _format_mapping(operator, k, v, mapping=False):
     else:
         return "{}".format(v)
 
+def _template_joiner(operator):
+    if operator in ['#', '+', '']:
+        return ','
+    elif operator == '?':
+        return '&'
+    elif operator == '.':
+        return'.'
+    return operator
+
 
 def uri_template(template, **kwargs):
     def template_expansion(matchobj):
@@ -45,19 +54,8 @@ def uri_template(template, **kwargs):
             operator = varlist[0]
             varlist = varlist[1:]
 
-        if operator in ['#', '+', '']:
-            joiner = ','
-        elif operator == '?':
-            joiner = '&'
-        elif operator == '.':
-            joiner = '.'
-        else:
-            joiner = operator
-
-        if operator == '+':
-            prefix = ''
-        else:
-            prefix = operator
+        prefix = '' if operator == '+' else operator
+        joiner = _template_joiner(operator)
 
         for index, varspec in enumerate(varlist.split(",")):
             portion = None 
@@ -76,9 +74,8 @@ def uri_template(template, **kwargs):
             if portion is not None: 
                 value = value[:portion]
 
-            if isinstance(value, (list, tuple)):
-                if explode:
-                    value = [(varspec, v) for v in value]
+            if isinstance(value, (list, tuple)) and explode:
+                value = [(varspec, v) for v in value]
 
             if not explode:
                 try:
