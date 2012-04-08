@@ -14,8 +14,16 @@ from . import wkz_urls as urls
 from . import wkz_datastructures as datastructures
 
 
-def _format_mapping(operator, k, v, mapping=False):
-    ignore = v == None or v == ""
+def _format_mapping(operator, item):
+    try:
+        k, v, mapped = item
+    except ValueError:
+        k, v = item
+        mapped = False
+
+    if v == '':
+        return "{}".format(k)
+
     if operator in ['#', '+']:
         # From http://tools.ietf.org/html/rfc6570#section-1.5
         safe = ':/?#[]@!$&\'\"()*/+,;='
@@ -27,12 +35,11 @@ def _format_mapping(operator, k, v, mapping=False):
     else:
         v = urls.url_quote(v, safe=safe)
 
-    if ignore:
-        return "{}".format(k)
-    elif operator in [';', '?', '&'] or mapping:
+    if operator in [';', '?', '&'] or mapped:
         return "{}={}".format(k, v)
     else:
         return "{}".format(v)
+
 
 def _template_joiner(operator):
     if operator in ['#', '+', '']:
@@ -44,11 +51,53 @@ def _template_joiner(operator):
     return operator
 
 
+def _varspec_expansion(operator, varspec, data):
+    portion = None
+    explode = False
+
+    if ":" in varspec:
+        varspec, portion = varspec.split(":", 1)
+        portion = int(portion)
+
+    if varspec.endswith("*"):
+        varspec = varspec[:-1]
+        explode = True
+
+    value = data[varspec]
+
+    try:
+        if explode:
+            return [(k, v, True) for k,v in value.items()]
+        else:
+            parts = []
+            for k, v in value.items():
+                parts += [k, v]
+            return [(varspec, parts)]
+    except AttributeError:
+        pass
+
+    if isinstance(value, (list, tuple)):
+        if explode:
+            return [(varspec, v) for v in value]
+        else:
+            return [(varspec, value)]
+
+    if value == None:
+        value = ''
+    else:
+        value = unicode(value)
+
+    if portion is not None:
+        value = value[:portion]
+
+    return [(varspec, value)]
+
+
 def uri_template(template, **kwargs):
+
     def template_expansion(matchobj):
         varlist = matchobj.group(1)
         operator = ""
-        uri = []
 
         if re.match(r"\+|#|\.|/|;|\?|&", varlist):
             operator = varlist[0]
@@ -57,52 +106,13 @@ def uri_template(template, **kwargs):
         prefix = '' if operator == '+' else operator
         joiner = _template_joiner(operator)
 
-        for index, varspec in enumerate(varlist.split(",")):
-            portion = None 
-            explode = False
+        params = []
+        for varspec in varlist.split(","):
+            params += _varspec_expansion(operator, varspec, kwargs)
 
-            if ":" in varspec:
-                varspec, portion = varspec.split(":", 1)
-                portion = int(portion)
-
-            if varspec.endswith("*"):
-                varspec = varspec[:-1]
-                explode = True
-
-            value = kwargs[varspec]
-
-            if portion is not None: 
-                value = value[:portion]
-
-            if isinstance(value, (list, tuple)) and explode:
-                value = [(varspec, v) for v in value]
-
-            if not explode:
-                try:
-                    parts = []
-                    for k, v in value.iteritems():
-                        parts += [k, v]
-                    value = parts
-                except AttributeError:
-                    pass
-
-            try:
-                for k, v in value.iteritems():
-                    uri.append(_format_mapping(operator, k, v, mapping=True))
-                continue
-            except AttributeError:
-                pass
-
-            try:
-                for (k, v) in value:
-                    uri.append(_format_mapping(operator, k, v))
-                continue
-            except (ValueError, TypeError):
-                pass
-            
-            uri.append(_format_mapping(operator, varspec, value))
-
+        uri = [_format_mapping(operator, item) for item in params]
         return prefix + joiner.join(uri)
+
     return re.sub(r"{(.*)}", template_expansion, template)
 
 
