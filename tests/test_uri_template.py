@@ -8,7 +8,7 @@ punc = OrderedDict([('semi', ";"), ('dot', "."), ('comma', ",")])
 
 
 def eq_(a, b):
-    assert_equals(uricore.URI(a), b)
+    assert_equals(a, b)
 
 
 def test_simple_string_expansion():
@@ -34,13 +34,12 @@ def test_string_expansion_multiple_vars():
 
 def test_reserved_expansion_multiple_vars():
     yield eq_, "1024,Hello%20World!,768", uri_template("{+x,hello,y}", x=1024, y=768, hello="Hello World!")
-    yield eq_, "/foo/bar,1024/here", uri_template("{+path,x}/here", path="/foo/bar")
+    yield eq_, "/foo/bar,1024/here", uri_template("{+path,x}/here", path="/foo/bar", x=1024)
 
 
 def test_fragment_expansion_muliple_vars():
-    # TODO Make sure %20 is ok to leave out
-    yield eq_, "#1024,Hello World!,768", uri_template("{#x,hello,y}", x=1024, y=768, hello="Hello World!")
-    yield eq_, "#/foo/bar,1024/here", uri_template("{#path,x}/here", path="/foo/bar")
+    yield eq_, "#1024,Hello%20World!,768", uri_template("{#x,hello,y}", x=1024, y=768, hello="Hello World!")
+    yield eq_, "#/foo/bar,1024/here", uri_template("{#path,x}/here", path="/foo/bar", x=1024)
 
 
 def test_label_expansion_dot_prefix():
@@ -95,7 +94,7 @@ def test_fragment_expansion_with_value_mods():
 
 def test_label_expansion_with_value_mods():
     yield eq_, "X.val", uri_template("X{.var:3}", var="value")
-    yield eq_, "X.red.green.blue", uri_template("X{.list}", list=colors)
+    yield eq_, "X.red,green,blue", uri_template("X{.list}", list=colors)
     yield eq_, "X.red.green.blue", uri_template("X{.list*}", list=colors)
     yield eq_, "X.semi,%3B,dot,.,comma,%2C", uri_template("X{.keys}", keys=punc)
     yield eq_, "X.semi=%3B.dot=..comma=%2C", uri_template("X{.keys*}", keys=punc)

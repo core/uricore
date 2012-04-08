@@ -13,6 +13,26 @@ import re
 from . import wkz_urls as urls
 from . import wkz_datastructures as datastructures
 
+def _format_mapping(operator, k, v, mapping=False):
+    ignore = v == None or v == ""
+    if operator in ['#', '+']:
+        # From http://tools.ietf.org/html/rfc6570#section-1.5
+        safe = ':/?#[]@!$&\'\"()*/+,;='
+    else:
+        safe = ''
+
+    if isinstance(v, (list, tuple)):
+        v = ','.join(urls.url_quote(x, safe=safe) for x in v)
+    else:
+        v = urls.url_quote(v, safe=safe)
+
+    if ignore:
+        return "{}".format(k)
+    elif operator in [';', '?', '&'] or mapping:
+        return "{}={}".format(k, v)
+    else:
+        return "{}".format(v)
+
 
 def uri_template(template, **kwargs):
     def template_expansion(matchobj):
@@ -50,7 +70,7 @@ def uri_template(template, **kwargs):
                 varspec = varspec[:-1]
                 explode = True
 
-            value = kwargs.get(varspec, "")
+            value = kwargs[varspec]
 
             if portion is not None: 
                 value = value[:portion]
@@ -58,43 +78,35 @@ def uri_template(template, **kwargs):
             if isinstance(value, (list, tuple)):
                 if explode:
                     value = [(varspec, v) for v in value]
-                else:
-                    value = ",".join(value)
 
-            if explode:
+            if not explode:
                 try:
-                    value = ",".join(value.values())
+                    parts = []
+                    for k, v in value.iteritems():
+                        parts += [k, v]
+                    value = parts
                 except AttributeError:
                     pass
- 
-
-            def format_mapping(k, v):
-                if operator in [';', '?', '&']:
-                    return "{}={}".format(k, v)
-                elif v is None:
-                    return "{}".format(k)
-                else:
-                    return "{}".format(v)
 
             try:
                 for k, v in value.iteritems():
-                    uri.append(format_mapping(k, v))
+                    uri.append(_format_mapping(operator, k, v, mapping=True))
                 continue
             except AttributeError:
                 pass
 
             try:
                 for (k, v) in value:
-                    uri.append(format_mapping(k, v))
+                    uri.append(_format_mapping(operator, k, v))
                 continue
             except (ValueError, TypeError):
                 pass
             
-            uri.append(format_mapping(varspec, value))
+            uri.append(_format_mapping(operator, varspec, value))
 
         return prefix + joiner.join(uri)
 
-    return URI(re.sub(r"{(.*)}", template_expansion, template))
+    return re.sub(r"{(.*)}", template_expansion, template)
 
 
 def build_netloc(hostname, auth=None, port=None):
