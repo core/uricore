@@ -130,5 +130,5 @@ def test_form_continuation_expansion_with_value_mods():
 
 
 def test_uri_template():
-    assert_equals(URI("http://example.com/value"),
-                  URI.from_template("http://example.com/{var}", var="value"))
+    eq_(URI("http://example.com/value"),
+        URI.from_template("http://example.com/{var}", var="value"))
