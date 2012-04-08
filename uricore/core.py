@@ -18,15 +18,29 @@ def uri_template(template, **kwargs):
     def template_expansion(matchobj):
         varlist = matchobj.group(1)
         operator = ""
+        uri = []
 
         if re.match(r"\+|#|\.|/|;|\?|&", varlist):
             operator = varlist[0]
             varlist = varlist[1:]
 
-        uri = ""
+        if operator in ['#', '+', '']:
+            joiner = ','
+        elif operator == '?':
+            joiner = '&'
+        elif operator == '.':
+            joiner = '.'
+        else:
+            joiner = operator
 
-        for varspec in varlist.split(","):
+        if operator == '+':
+            prefix = ''
+        else:
+            prefix = operator
+
+        for index, varspec in enumerate(varlist.split(",")):
             portion = None 
+            explode = False
 
             if ":" in varspec:
                 varspec, portion = varspec.split(":", 1)
@@ -34,17 +48,53 @@ def uri_template(template, **kwargs):
 
             if varspec.endswith("*"):
                 varspec = varspec[:-1]
+                explode = True
 
             value = kwargs.get(varspec, "")
 
             if portion is not None: 
-                uri += operator + value[:portion] 
-            else:
-                uri += operator + value
+                value = value[:portion]
 
-        return uri
+            if isinstance(value, (list, tuple)):
+                if explode:
+                    value = [(varspec, v) for v in value]
+                else:
+                    value = ",".join(value)
 
-    return re.sub(r"{(.*)}", template_expansion, template)
+            if explode:
+                try:
+                    value = ",".join(value.values())
+                except AttributeError:
+                    pass
+ 
+
+            def format_mapping(k, v):
+                if operator in [';', '?', '&']:
+                    return "{}={}".format(k, v)
+                elif v is None:
+                    return "{}".format(k)
+                else:
+                    return "{}".format(v)
+
+            try:
+                for k, v in value.iteritems():
+                    uri.append(format_mapping(k, v))
+                continue
+            except AttributeError:
+                pass
+
+            try:
+                for (k, v) in value:
+                    uri.append(format_mapping(k, v))
+                continue
+            except (ValueError, TypeError):
+                pass
+            
+            uri.append(format_mapping(varspec, value))
+
+        return prefix + joiner.join(uri)
+
+    return URI(re.sub(r"{(.*)}", template_expansion, template))
 
 
 def build_netloc(hostname, auth=None, port=None):
