@@ -1,15 +1,10 @@
 from uricore import URI
-from nose.tools import assert_equals
+from nose.tools import eq_ 
 from uricore.core import uri_template
 from collections import OrderedDict
 
 colors = ["red", "green", "blue"]
 punc = OrderedDict([('semi', ";"), ('dot', "."), ('comma', ",")])
-
-
-def eq_(a, b):
-    assert_equals(a, b)
-
 
 def test_simple_string_expansion():
     yield eq_, "value", uri_template("{var}", var="value")
