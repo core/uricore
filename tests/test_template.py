@@ -1,6 +1,6 @@
 from uricore import URI
 from nose.tools import eq_ 
-from uricore.core import uri_template
+from uricore.template import uri_template
 from collections import OrderedDict
 
 # http://tools.ietf.org/html/rfc6570#section-3.2
