@@ -21,9 +21,6 @@ def _format_mapping(operator, item):
         k, v = item
         mapped = False
 
-    if v == '':
-        return "{}".format(k)
-
     if operator in ['#', '+']:
         # From http://tools.ietf.org/html/rfc6570#section-1.5
         safe = ':/?#[]@!$&\'\"()*/+,;='
@@ -36,7 +33,12 @@ def _format_mapping(operator, item):
         v = urls.url_quote(v, safe=safe)
 
     if operator in [';', '?', '&'] or mapped:
-        return "{}={}".format(k, v)
+        if not v:
+            mid = '' if operator == ';' else '='
+        else:
+            mid = '='
+
+        return "{}{}{}".format(k, mid, v)
     else:
         return "{}".format(v)
 
@@ -55,15 +57,18 @@ def _varspec_expansion(operator, varspec, data):
     portion = None
     explode = False
 
-    if ":" in varspec:
-        varspec, portion = varspec.split(":", 1)
+    if ':' in varspec:
+        varspec, portion = varspec.split(':', 1)
         portion = int(portion)
 
-    if varspec.endswith("*"):
+    if varspec.endswith('*'):
         varspec = varspec[:-1]
         explode = True
 
-    value = data[varspec]
+    value = data.get(varspec)
+
+    if value in [None, [], {}]:
+        return []
 
     try:
         if explode:
@@ -82,10 +87,7 @@ def _varspec_expansion(operator, varspec, data):
         else:
             return [(varspec, value)]
 
-    if value == None:
-        value = ''
-    else:
-        value = unicode(value)
+    value = unicode(value)
 
     if portion is not None:
         value = value[:portion]
@@ -97,7 +99,7 @@ def uri_template(template, **kwargs):
 
     def template_expansion(matchobj):
         varlist = matchobj.group(1)
-        operator = ""
+        operator = ''
 
         if re.match(r"\+|#|\.|/|;|\?|&", varlist):
             operator = varlist[0]
@@ -107,13 +109,17 @@ def uri_template(template, **kwargs):
         joiner = _template_joiner(operator)
 
         params = []
-        for varspec in varlist.split(","):
+        for varspec in varlist.split(','):
             params += _varspec_expansion(operator, varspec, kwargs)
 
         uri = [_format_mapping(operator, item) for item in params]
+
+        if not uri:
+            return ""
+
         return prefix + joiner.join(uri)
 
-    return re.sub(r"{(.*)}", template_expansion, template)
+    return re.sub(r"{(.*?)}", template_expansion, template)
 
 
 def build_netloc(hostname, auth=None, port=None):
