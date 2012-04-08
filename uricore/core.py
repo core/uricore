@@ -7,14 +7,44 @@ except ImportError:
     import urllib.parse as urlparse
 
 from collections import defaultdict
+import re
 
 # TODO: import these from httpcore someday
 from . import wkz_urls as urls
 from . import wkz_datastructures as datastructures
 
 
-def uri_template(*args, **kwargs):
-    return ""
+def uri_template(template, **kwargs):
+    def template_expansion(matchobj):
+        varlist = matchobj.group(1)
+        operator = ""
+
+        if re.match(r"\+|#|\.|/|;|\?|&", varlist):
+            operator = varlist[0]
+            varlist = varlist[1:]
+
+        uri = ""
+
+        for varspec in varlist.split(","):
+            portion = None 
+
+            if ":" in varspec:
+                varspec, portion = varspec.split(":", 1)
+                portion = int(portion)
+
+            if varspec.endswith("*"):
+                varspec = varspec[:-1]
+
+            value = kwargs.get(varspec, "")
+
+            if portion is not None: 
+                uri += operator + value[:portion] 
+            else:
+                uri += operator + value
+
+        return uri
+
+    return re.sub(r"{(.*)}", template_expansion, template)
 
 
 def build_netloc(hostname, auth=None, port=None):
