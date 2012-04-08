@@ -1,4 +1,4 @@
-import uricore
+from uricore import URI
 from nose.tools import assert_equals
 from uricore.core import uri_template
 from collections import OrderedDict
@@ -134,4 +134,6 @@ def test_form_continuation_expansion_with_value_mods():
     yield eq_, "&semi=%3B&dot=.&comma=%2C", uri_template("{&keys*}", keys=punc)
 
 
-
+def test_uri_template():
+    assert_equals(URI("http://example.com/value"),
+                  URI.from_template("http://example.com/{var}", var="value"))

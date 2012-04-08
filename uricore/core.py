@@ -13,6 +13,7 @@ import re
 from . import wkz_urls as urls
 from . import wkz_datastructures as datastructures
 
+
 def _format_mapping(operator, k, v, mapping=False):
     ignore = v == None or v == ""
     if operator in ['#', '+']:
@@ -105,7 +106,6 @@ def uri_template(template, **kwargs):
             uri.append(_format_mapping(operator, varspec, value))
 
         return prefix + joiner.join(uri)
-
     return re.sub(r"{(.*)}", template_expansion, template)
 
 
@@ -340,3 +340,7 @@ class URI(ResourceIdentifier):
     @classmethod
     def from_lenient(cls, maybe_gibberish):
         return cls(urls.url_fix(maybe_gibberish))
+
+    @classmethod
+    def from_template(cls, template, **kwargs):
+        return cls(uri_template(template, **kwargs))
