@@ -13,6 +13,10 @@ from . import wkz_urls as urls
 from . import wkz_datastructures as datastructures
 
 
+def uri_template(*args, **kwargs):
+    return ""
+
+
 def build_netloc(hostname, auth=None, port=None):
     auth = "{0}@".format(auth) if auth else ""
     port = ":{0}".format(port) if port else ""
