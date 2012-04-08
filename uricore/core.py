@@ -67,8 +67,14 @@ def _varspec_expansion(operator, varspec, data):
 
     value = data.get(varspec)
 
-    if value in [None, [], {}]:
+    if value == None:
         return []
+
+    try:
+        if len(value) == 0 and value != "":
+            return []
+    except TypeError:
+        pass
 
     try:
         if explode:
