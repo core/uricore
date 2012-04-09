@@ -195,6 +195,11 @@ class ResourceIdentifier(object):
 
         return type(self)(unsplit(**vals), query_cls=self.query_cls)
 
+    @classmethod
+    def from_template(cls, template, **kwargs):
+        return cls(uri_template(template, **kwargs))
+
+
 
 class IRI(ResourceIdentifier):
 
@@ -245,7 +250,3 @@ class URI(ResourceIdentifier):
     @classmethod
     def from_lenient(cls, maybe_gibberish):
         return cls(urls.url_fix(maybe_gibberish))
-
-    @classmethod
-    def from_template(cls, template, **kwargs):
-        return cls(uri_template(template, **kwargs))

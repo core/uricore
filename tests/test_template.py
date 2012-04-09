@@ -1,4 +1,5 @@
-from uricore import URI
+# encoding: utf-8
+from uricore import URI, IRI
 from nose.tools import eq_ 
 from uricore.template import uri_template
 from collections import OrderedDict
@@ -185,6 +186,18 @@ def test_variable_expansion():
     yield check_template, "{?count*}", "?count=one&count=two&count=three"
     yield check_template, "{&count*}", "&count=one&count=two&count=three"
 
+
+def test_composite_values():
+    yield check_template, "find{?year*}", "find?year=1965&year=2000&year=2012"
+    yield check_template, "www{.dom*}", "www.example.com"
+
+
 def test_uri_template():
     eq_(URI("http://example.com/value"),
         URI.from_template("http://example.com/{var}", var="value"))
+
+
+def test_iri_template():
+    eq_(IRI(u'http://\u2603/value'),
+        IRI.from_template(u'http://\N{SNOWMAN}/{var}', var='value'))
+ 
