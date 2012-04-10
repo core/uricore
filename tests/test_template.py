@@ -2,7 +2,20 @@
 from uricore import URI, IRI
 from nose.tools import eq_ 
 from uricore.template import uri_template
-from collections import OrderedDict
+
+class CompatiblityOrderedDict(object):
+
+    def __init__(self, items):
+        self._items = items
+
+    def iteritems(self):
+        return iter(self._items)
+
+try:
+    from collections import OrderedDict
+except ImportError:
+    OrderedDict = CompatiblityOrderedDict
+
 
 # http://tools.ietf.org/html/rfc6570#section-3.2
 params = {
@@ -25,6 +38,7 @@ params = {
     'empty_keys': [],
     'undef': None,
     'list': ["red", "green", "blue"],
+    #"keys": {'semi': ";", "dot": ".", "comma": ","},
     'keys': OrderedDict([('semi', ";"), ('dot', "."), ('comma', ",")]),
 }
 
@@ -187,11 +201,6 @@ def test_variable_expansion():
     yield check_template, "{&count*}", "&count=one&count=two&count=three"
 
 
-def test_composite_values():
-    yield check_template, "find{?year*}", "find?year=1965&year=2000&year=2012"
-    yield check_template, "www{.dom*}", "www.example.com"
-
-
 def test_uri_template():
     eq_(URI("http://example.com/value"),
         URI.from_template("http://example.com/{var}", var="value"))
@@ -200,4 +209,3 @@ def test_uri_template():
 def test_iri_template():
     eq_(IRI(u'http://\u2603/value'),
         IRI.from_template(u'http://\N{SNOWMAN}/{var}', var='value'))
- 
