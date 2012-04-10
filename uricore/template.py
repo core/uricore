@@ -66,10 +66,10 @@ def _varspec_expansion(operator, varspec, data):
 
     try:
         if explode:
-            return [(k, v, True) for k,v in value.items()]
+            return [(k, v, True) for k,v in value.iteritems()]
         else:
             parts = []
-            for k, v in value.items():
+            for k, v in value.iteritems():
                 parts += [k, v]
             return [(varspec, parts)]
     except AttributeError:
@@ -114,5 +114,3 @@ def uri_template(template, **kwargs):
         return prefix + joiner.join(uri)
 
     return re.sub(r"{(.*?)}", template_expansion, template)
-
-
