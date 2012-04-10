@@ -3,18 +3,13 @@ from uricore import URI, IRI
 from nose.tools import eq_ 
 from uricore.template import uri_template
 
-class CompatiblityOrderedDict(object):
+class OrderedDict(object):
 
     def __init__(self, items):
         self._items = items
 
     def iteritems(self):
         return iter(self._items)
-
-try:
-    from collections import OrderedDict
-except ImportError:
-    OrderedDict = CompatiblityOrderedDict
 
 
 # http://tools.ietf.org/html/rfc6570#section-3.2
