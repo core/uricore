@@ -26,7 +26,7 @@ def _format_mapping(operator, item):
         else:
             mid = '='
 
-        return "{0}{1}{2}".format(k, mid, v)
+        return "{0}{1}{2}".format(urls.url_quote(k, safe=safe), mid, v)
     else:
         return "{0}".format(v)
 

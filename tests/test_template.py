@@ -209,5 +209,5 @@ def test_iri_template():
         IRI.from_template(u'http://{domain}/', domain=u"\N{SNOWMAN}"))
 
 def test_crazy_keys():
-    yield check_template, "{?unicode_keys*}", u"?gro\xdf=great"
-    yield check_template, "{?numeric_keys*}", u"?1=hello"
+    yield check_template, "{?unicode_keys*}", "?gro%C3%9F=great"
+    yield check_template, "{?numeric_keys*}", "?1=hello"
