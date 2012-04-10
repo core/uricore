@@ -35,3 +35,6 @@ Example of use:
     IRI(u'http://\u2603/')
     >>> iriq.query
     MultiDict([('foo', '42')])
+    >>> URI.from_template('http://{domain}/find{?year*}', domain="example.com",
+    ... year=("1965", "2000", "2012"))
+    URI('http://example.com/find?year=1965&year=2000&year=2012')
