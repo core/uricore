@@ -26,9 +26,9 @@ def _format_mapping(operator, item):
         else:
             mid = '='
 
-        return "{}{}{}".format(k, mid, v)
+        return "{0}{1}{2}".format(k, mid, v)
     else:
-        return "{}".format(v)
+        return "{0}".format(v)
 
 
 def _template_joiner(operator):
