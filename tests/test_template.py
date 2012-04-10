@@ -33,6 +33,8 @@ params = {
     'empty_keys': [],
     'undef': None,
     'list': ["red", "green", "blue"],
+    'unicode_keys': {u'gro\xdf':u'great',},
+    'numeric_keys': {1: 'hello'},
     'keys': OrderedDict([('semi', ";"), ('dot', "."), ('comma', ",")]),
 }
 
@@ -203,3 +205,9 @@ def test_uri_template():
 def test_iri_template():
     eq_(IRI(u'http://\u2603/value'),
         IRI.from_template(u'http://\N{SNOWMAN}/{var}', var='value'))
+    eq_(IRI(u'http://\u2603/'),
+        IRI.from_template(u'http://{domain}/', domain=u"\N{SNOWMAN}"))
+
+def test_crazy_keys():
+    yield check_template, "{?unicode_keys*}", u"?gro\xdf=great"
+    yield check_template, "{?numeric_keys*}", u"?1=hello"
