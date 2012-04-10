@@ -7,6 +7,7 @@ except ImportError:
     import urllib.parse as urlparse
 
 from collections import defaultdict
+from template import uri_template
 
 # TODO: import these from httpcore someday
 from . import wkz_urls as urls
@@ -193,6 +194,11 @@ class ResourceIdentifier(object):
             vals['fragment'] = other.fragment
 
         return type(self)(unsplit(**vals), query_cls=self.query_cls)
+
+    @classmethod
+    def from_template(cls, template, **kwargs):
+        return cls(uri_template(template, **kwargs))
+
 
 
 class IRI(ResourceIdentifier):
