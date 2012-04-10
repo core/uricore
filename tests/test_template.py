@@ -33,7 +33,6 @@ params = {
     'empty_keys': [],
     'undef': None,
     'list': ["red", "green", "blue"],
-    #"keys": {'semi': ";", "dot": ".", "comma": ","},
     'keys': OrderedDict([('semi', ";"), ('dot', "."), ('comma', ",")]),
 }
 
