@@ -1,5 +1,5 @@
 import re
-from . import wkz_urls as urls
+from uricore.wkz_urls  import url_quote
 
 
 def _format_mapping(operator, item):
@@ -16,9 +16,9 @@ def _format_mapping(operator, item):
         safe = ''
 
     if isinstance(v, (list, tuple)):
-        v = ','.join(urls.url_quote(x, safe=safe) for x in v)
+        v = ','.join(url_quote(x, safe=safe) for x in v)
     else:
-        v = urls.url_quote(v, safe=safe)
+        v = url_quote(v, safe=safe)
 
     if operator in [';', '?', '&'] or mapped:
         if not v:
@@ -26,9 +26,9 @@ def _format_mapping(operator, item):
         else:
             mid = '='
 
-        return "{0}{1}{2}".format(urls.url_quote(k, safe=safe), mid, v)
+        return u"{0}{1}{2}".format(url_quote(k, safe=safe), mid, v)
     else:
-        return "{0}".format(v)
+        return u"{0}".format(v)
 
 
 def _template_joiner(operator):
