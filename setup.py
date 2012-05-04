@@ -13,7 +13,7 @@ setup(
     description='URI Parsing for Humans.',
     long_description=open('README.md').read(),
     author='Matthew Hooker & Jeremy Avnet & Matt Chisholm',
-    author_email='mwhooker@gmail.com',
+    author_email='uricore@librelist.com',
     url='https://github.com/core/uricore',
     py_modules= ['uricore',],
     license='BSD',
