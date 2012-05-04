@@ -12,7 +12,7 @@ setup(
     version='0.1.0',
     description='URI Parsing for Humans.',
     long_description=open('README.md').read(),
-    author='Matthew Hooker, Jeremy Avnet, Matt Chisholm',
+    author='Matthew Hooker & Jeremy Avnet & Matt Chisholm',
     author_email='mwhooker@gmail.com',
     url='https://github.com/core/uricore',
     py_modules= ['uricore',],
