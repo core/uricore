@@ -44,6 +44,9 @@ class TestIRI(unittest.TestCase):
         except Exception as e:
             assert False, "{0} {1}".format(type(e), e)
 
+    def test_nonascii_query_keys(self):
+        IRI(u'http://example.com/?gro\xdf=great')
+
     def test_iri_from_lenient(self):
         lenient_iri = IRI.from_lenient(u'http://de.wikipedia.org/wiki/Elf (Begriffskl\xe4rung)')
         self.assertEquals(repr(lenient_iri), "IRI(u'http://de.wikipedia.org/wiki/Elf%20%28Begriffskl%C3%A4rung%29')")
