@@ -1,21 +1,18 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup
 
 
 setup(
     name='uricore',
-    version='0.1.1',
+    version='0.1.2',
     description='URI Parsing for Humans.',
     long_description=open('README.md').read(),
     author='Matthew Hooker & Jeremy Avnet & Matt Chisholm',
     author_email='uricore@librelist.com',
     url='https://github.com/core/uricore',
-    py_modules= ['uricore',],
+    packages= ['uricore',],
     license='BSD',
     classifiers=(
         'Development Status :: 4 - Beta',
