@@ -9,7 +9,7 @@ except ImportError:
 
 setup(
     name='uricore',
-    version='0.1.0',
+    version='0.1.1',
     description='URI Parsing for Humans.',
     long_description=open('README.md').read(),
     author='Matthew Hooker & Jeremy Avnet & Matt Chisholm',
