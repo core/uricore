@@ -104,6 +104,22 @@ class TestIRIPileOfPoo(cases.IdentifierCase):
 
 class TestIRIIPv6(cases.IdentifierCase):
 
+    ri = IRI("http://u:p@[2a00:1450:4001:c01::67]/path?q=arg#frag")
+    expect = dict(
+        scheme="http",
+        auth="u:p",
+        hostname="2a00:1450:4001:c01::67",
+        port=None,
+        path="/path",
+        query=MultiDict([('q', 'arg')]),
+        querystr='q=arg',
+        fragment="frag",
+        netloc="u:p@[2a00:1450:4001:c01::67]",
+    )
+
+
+class TestIRIIPv6WithPort(cases.IdentifierCase):
+
     ri = IRI("http://u:p@[2a00:1450:4001:c01::67]:80/path?q=arg#frag")
     expect = dict(
         scheme="http",
