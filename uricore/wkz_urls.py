@@ -97,7 +97,7 @@ def _uri_split(uri):
     scheme, netloc, path, query, fragment = _safe_urlsplit(uri)
 
     port = None
-    host = None
+    host = ''
 
     if '@' in netloc:
         auth, hostname = netloc.split('@', 1)
