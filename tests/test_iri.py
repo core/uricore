@@ -102,17 +102,6 @@ class TestIRIPileOfPoo(cases.IdentifierCase):
     )
 
 
-class TestIRIJoin(cases.JoinAndUpdateCase):
-
-    RI = IRI
-
-    def test_cannot_join_uri(self):
-        self.assertRaises(TypeError,
-                          IRI('http://localhost:8000').join,
-                          URI(str('/path/to/file'))
-                         )
-
-
 class TestIRIIPv6(cases.IdentifierCase):
 
     ri = IRI("http://u:p@[2a00:1450:4001:c01::67]:80/path?q=arg#frag")
@@ -127,6 +116,17 @@ class TestIRIIPv6(cases.IdentifierCase):
         fragment="frag",
         netloc="u:p@[2a00:1450:4001:c01::67]:80",
     )
+
+
+class TestIRIJoin(cases.JoinAndUpdateCase):
+
+    RI = IRI
+
+    def test_cannot_join_uri(self):
+        self.assertRaises(TypeError,
+                          IRI('http://localhost:8000').join,
+                          URI(str('/path/to/file'))
+                         )
 
 
 class TestIRINormalizes(cases.NormalizeCase):

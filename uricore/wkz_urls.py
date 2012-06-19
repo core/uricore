@@ -136,6 +136,10 @@ def iri_to_uri(iri, charset='utf-8'):
 
     scheme = scheme.encode('ascii')
     hostname = hostname.encode('idna')
+
+    if ':' in hostname:
+        hostname = '[' + hostname + ']'
+
     if auth:
         if ':' in auth:
             auth, password = auth.split(':', 1)
@@ -190,6 +194,9 @@ def uri_to_iri(uri, charset='utf-8', errors='replace'):
         if errors not in ('ignore', 'replace'):
             raise
         hostname = hostname.decode('ascii', errors)
+
+    if ':' in hostname:
+        hostname = '[' + hostname + ']'
 
     if auth:
         if ':' in auth:

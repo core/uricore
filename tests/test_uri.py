@@ -98,6 +98,22 @@ class TestURIPileOfPoo(cases.IdentifierCase):
     )
 
 
+class TestURIIPv6(cases.IdentifierCase):
+
+    ri = URI("http://u:p@[2a00:1450:4001:c01::67]:80/path?q=arg#frag")
+    expect = dict(
+        scheme="http",
+        auth="u:p",
+        hostname="2a00:1450:4001:c01::67",
+        port="80",
+        path="/path",
+        query=MultiDict([('q', 'arg')]),
+        querystr='q=arg',
+        fragment="frag",
+        netloc="u:p@[2a00:1450:4001:c01::67]:80",
+    )
+
+
 class TestURIJoin(cases.JoinAndUpdateCase):
 
     RI = lambda self, s: URI(self._literal_wrapper(s), encoding='utf-8')
