@@ -96,23 +96,20 @@ def _uri_split(uri):
     """Splits up an URI or IRI."""
     scheme, netloc, path, query, fragment = _safe_urlsplit(uri)
 
+    auth = None
     port = None
-    host = ''
 
     if '@' in netloc:
-        auth, hostname = netloc.split('@', 1)
+        auth, netloc = netloc.split('@', 1)
+
+    if netloc.startswith('['):
+        host, port_part = netloc[1:].split(']', 1)
+        if port_part.startswith(':'):
+            port = port_part[1:]
+    elif ':' in netloc:
+        host, port = netloc.split(':', 1)
     else:
-        auth = None
-        hostname = netloc
-    if hostname:
-        if hostname[0] == '[':
-            host, hostname = hostname[1:].split(']', 1)
-        if ':' in hostname:
-            _host, port = hostname.split(':', 1)
-            if not host:
-                host = _host
-        elif not host:
-            host = hostname
+        host = netloc
     return scheme, auth, host, port, path, query, fragment
 
 
