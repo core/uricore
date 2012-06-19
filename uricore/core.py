@@ -17,6 +17,8 @@ from . import wkz_datastructures as datastructures
 def build_netloc(hostname, auth=None, port=None):
     auth = "{0}@".format(auth) if auth else ""
     port = ":{0}".format(port) if port else ""
+    if ':' in hostname:
+        hostname = '['+hostname+']'
     if isinstance(hostname, unicode):
         return u"{0}{1}{2}".format(auth, hostname, port)
     return "{0}{1}{2}".format(auth, hostname, port)
